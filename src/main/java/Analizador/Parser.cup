@@ -1,0 +1,459 @@
+package Analizador;
+
+import java_cup.runtime.Symbol;
+import com.hp.gagawa.java.elements.*;
+import Tablas.Tabla;
+
+parser code
+{:
+    private Symbol sym;
+    public Tabla tab = new Tabla();
+    public Html tab = new Html();
+    
+    public Symbol getS(){
+        return this.sym;
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        System.out.println("reportfatal "+message+info);
+    }
+    public void report_fatal_error(Symbol cur) {
+        System.out.println("unrecovered_syntax_error");
+    }
+
+    public void imp(String texto){
+        System.out.println(texto);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        System.out.println(symbl_name_from_id(expected_token_ids().get(0)));
+        System.out.println("syntaxerr: " + symbl_name_from_id(cur_token.sym) +" Linea: "+cur_token.right+" Columna: "+cur_token.left+" Valor:"+cur_token.value);
+    }
+
+    protected int error_sync_size() {
+        return 1;
+    }
+
+:};
+
+terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TEXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, P, HREF,
+    BG, COLOR, FTS, FTF, TXTA, TYPE, ID, NAME, COLS, ROWS, CLASS, SRC, WIDTH, HEIGHT, ALT, ONC, PARENTESISA,
+    PARENTESISC, LLAVEA, LLAVEC, CORCHETEA, CORCHETEC, MODO, FINETIQUETA, MAYORQ, MENORQ, COMP_IGUAL, COMP_DIF,
+    COMP_MENOR, COMP_MAYOR, OR, AND, NOT, MAS, MENOS, POR, ENTRE, ASC, DESC, FPAR, FIMPAR, REVERSE, FCARACTER,
+    FNUM, ALERT, EXIT, INT, BOOLEAN, STRING, DECIMAL, DECIMALD, CHAR, GET_ELEMENT, PUNTOC, INIT, DOSP, IF, ELSE, REPEAT,
+    HUNTIL, WHILE, THENW, THEN, INSERT, HEX, NUMERO, PIXELS, PORC, COLORES, FUENTES, ALIGN, TIPOS, CLASE,
+    URL, IGUAL, COMILLAS, SCRIPT, IDENTIFICADOR, ONLOAD, ERRORLEX, STRINGD, COMA,APOS, BOOLEAND; 
+
+non terminal inicio, tipo_string, bloque_etiquetas, bloque_global, bloque_etiquetasP, etiqueta, tipo_etiqueta, h1, br, img, div,
+    button, p, spam, script, input, textarea, select, bloque_opciones, bloque_opcionesP, opcion, metodo, bloque_head, string, parametros_textarea,
+    parametros_h1, parametros_input, parametros_button, parametros_div, parametros_img, bloque_codigo, parametros_gcic;
+
+non terminal HashMap<String, Object> dato, expr;
+non terminal H1 h1;
+non terminal Div div;
+non terminal Textarea textarea;
+non terminal Select select;
+non terminal Input input;
+non terminal Img img;
+non terminal Br br;
+non terminal Button button;
+non terminal Span spam;
+non terminal Option opcion;
+non terminal List<Option> bloque_opciones;
+non terminal P p;
+
+precedence left MAS, MENOS;
+precedence left POR, ENTRE;
+precedence left UMINUS;
+precedence left COMP_IGUAL, COMP_DIF, MENORQ, COMP_MENOR, COMP_MAYOR, MAYORQ;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+
+start with inicio;
+
+inicio::=
+    MENORQ GCIC CORCHETEA parametros_gcic MAYORQ bloque_global FINETIQUETA GCIC MAYORQ
+;
+
+tipo_string::=
+    IDENTIFICADOR
+    | STRING
+;
+
+bloque_global ::=
+    MENORQ HEAD MAYORQ MENORQ bloque_head FINETIQUETA HEAD MAYORQ MENORQ BODY parametros_body MAYORQ bloque_etiquetas FINETIQUETA BODY MAYORQ FINETIQUETA GCIC MAYORQ
+;
+
+
+bloque_head::=
+    LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ MENORQ TITLE MAYORQ tipo_string FINETIQUETA TITLE MAYORQ
+    | TITLE MAYORQ tipo_string FINETIQUETA TITLE MAYORQ MENORQ LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ
+;
+
+colors::=
+    COLORES
+    | HEX
+;
+
+parametros_body::=
+    | CORCHETEA bg
+;
+
+parametros_button::=
+    | lista_button
+;
+
+lista_button::=
+    CORCHETEA tipo_button lista_buttonP
+;
+
+lista_buttonP::=
+    | lista_button
+;
+
+tipo_button::=
+    fts
+    | ftf
+    | txta
+    | id
+    | color
+    | bg
+    | onc
+;
+
+onc::=
+    ONC IGUAL COMILLAS IDENTIFICADOR PARENTESISA PARENTESISC COMILLAS CORCHETEC
+;
+
+parametros_div::=
+    | lista_div
+;
+
+lista_div::=
+    CORCHETEA tipo_div lista_divP
+;
+
+lista_divP::=
+    | lista_div
+;
+
+tipo_div::=
+    fts
+    | ftf
+    | txta
+    | id
+    | class
+    | color
+    | bg
+;
+
+bg::=
+    BG IGUAL COMILLAS colors COMILLAS CORCHETEC
+;
+
+class::=
+    CLASS IGUAL COMILLAS CLASE COMILLAS CORCHETEC
+;
+
+parametros_gcic::=
+    name CORCHETEA id
+    | id CORCHETEA name
+;
+
+parametros_img::=
+    | lista_img
+;
+
+lista_img::=
+    CORCHETEA tipo_img lista_imgP
+;
+
+lista_imgP::=
+    | lista_img
+;
+
+parametros_input::=
+    | lista_input
+;
+
+lista_input::=
+    CORCHETEA tipo_input lista_inputP
+;
+
+lista_inputP::=
+    | lista_input
+;
+
+tipo_input::=
+    type
+    | fts
+    | ftf
+    | txta
+    | id
+;
+
+tipo_img::=
+    src
+    | width
+    | height
+    | alt
+    | id
+;
+
+parametros_h1::=
+    | lista_h1
+;
+
+lista_h1::=
+    CORCHETEA tipo_h1 lista_h1P
+;
+
+lista_h1P::=
+    | lista_h1
+;   
+
+tipo_h1::=
+    fts
+    | ftf
+    | txta
+    | id
+    | color
+;
+
+type::=
+    TYPE IGUAL COMILLAS TIPOS COMILLAS CORCHETEC
+;
+
+src::=
+    SRC IGUAL COMILLAS URL COMILLAS CORCHETEC
+;
+
+numerico::=
+    PIXELS
+    | POR
+;
+
+width::=
+    WIDTH IGUAL COMILLAS numerico COMILLAS CORCHETEC
+;
+
+height::=
+    HEIGHT IGUAL COMILLAS numerico COMILLAS CORCHETEC
+;
+
+alt::=
+    ALT IGUAL COMILLAS string COMILLAS CORCHETEC
+;
+
+name::=
+    NAME IGUAL COMILLAS STRING COMILLAS CORCHETEC
+;
+
+id::=
+    ID IGUAL COMILLAS IDENTIFICADOR COMILLAS CORCHETEC
+;
+
+fts::=
+    FTS IGUAL COMILLAS PIXELS COMILLAS CORCHETEC
+;
+
+ftf::=
+    FTF IGUAL COMILLAS FUENTES COMILLAS CORCHETEC
+;
+
+txta::=
+    TXTA IGUAL COMILLAS ALIGN COMILLAS CORCHETEC
+;
+
+color::=
+    COLOR IGUAL COMILLAS colors COMILLAS CORCHETEC
+;
+
+bloque_etiquetas ::=
+    etiqueta bloque_etiquetasP
+;
+
+bloque_etiquetasP ::=
+    | bloque_etiquetas
+;
+
+etiqueta::=
+    MENORQ tipo_etiqueta
+;
+
+tipo_etiqueta::=
+    h1
+    | br
+    | spam
+    | script
+    | input
+    | textarea
+    | select
+    | div
+    | img
+    | button
+    | p
+;
+
+h1::=
+    H1 parametros_h1 MAYORQ string FINETIQUETA H1 MAYORQ
+;
+
+br::=
+    BR MAYORQ
+;
+
+img::=
+    IMG parametros_img MAYORQ
+;
+
+div::=
+    DIV parametros_div MAYORQ bloque_etiquetas FINETIQUETA DIV MAYORQ
+;
+
+button::=
+    BUTTON parametros_button MAYORQ string FINETIQUETA BUTTON MAYORQ
+;
+
+p::=
+    P parametros_h1 MAYORQ string FINETIQUETA P MAYORQ
+;
+
+spam::=
+    SPAM parametros_h1 MAYORQ string FINETIQUETA SPAM MAYORQ
+;
+
+script::=
+    SCRIPT MAYORQ metodo 
+;
+
+input::=
+    INPUT parametros_input MAYORQ
+;
+
+textarea::=
+    TEXTAREA parametros_textarea MAYORQ
+;
+
+select::=
+    SELECT parametros_h1 MAYORQ bloque_opciones FINETIQUETA SELECT MAYORQ
+;
+
+bloque_opciones::=
+    opcion bloque_opcionesP
+;
+
+bloque_opcionesP::=
+    | bloque_opciones
+;
+
+opcion::=
+    MENORQ OPTION MAYORQ string FINETIQUETA OPTION MAYORQ
+;
+
+metodo::=
+    ONLOAD PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC FINETIQUETA SCRIPT MAYORQ
+    | IDENTIFICADOR PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC FINETIQUETA SCRIPT MAYORQ
+;
+
+
+string::=
+    STRING
+    | NUMERO
+;
+
+bloque_codigo::=
+    instruccion bloque_codigo
+    | instruccion
+;
+
+instruccion::=
+    declaracion
+    | asignacion
+    | llamada
+;
+
+llamada::=
+    ALERT PARENTESISA IDENTIFICADOR PARENTESISC
+    | EXIT PARENTESISA PARENTESISC
+;
+
+declaracion::=
+    tipo_dato global bloque_ids valor_asignar PUNTOC
+;
+
+asignacion::=
+    IDENTIFICADOR IGUAL valor_boolean PUNTOC
+;
+
+entre::=
+    IDENTIFICADOR
+    | COMILLAS STRING COMILLAS
+;
+
+valor_asignar::=
+    | IGUAL valor_boolean
+    | GET_ELEMENT PARENTESISA APOS IDENTIFICADOR APOS PARENTESISC
+    | ASC PARENTESISA entre PARENTESISC
+    | DESC PARENTESISA entre PARENTESISC
+    | FPAR PARENTESISA entre PARENTESISC
+    | FIMPAR PARENTESISA entre PARENTESISC
+    | REVERSE PARENTESISA entre PARENTESISC
+    | FCARACTER PARENTESISA PARENTESISC
+    | FNUM PARENTESISA entre PARENTESISC
+;
+
+tipo_dato::=
+    INT
+    | STRINGD
+    | DECIMALD
+    | CHAR
+    | BOOLEAND
+;
+
+valor_boolean::=
+    valor_boolean:e1 OR valor_boolean:e2                {: RESULT = tab.resultado_or(e1,e2); :}
+    | valor_boolean:e1 AND valor_boolean:e2             {: RESULT = tab.resultado_and(e1,e2); :}
+    | NOT valor_boolean:e1                              {: RESULT = tab.resultado_not(e1); :}
+    | valor_boolean:e1 COMP_IGUAL valor_boolean:e2      {: RESULT = tab.resultado_ii(e1,e2); :}
+    | valor_boolean:e1 COMP_DIF valor_boolean:e2        {: RESULT = tab.resultado_dif(e1,e2); :}
+    | valor_boolean:e1 COMP_MENOR valor_boolean:e2      {: RESULT = tab.resultado_mayor(e2,e1); :}
+    | valor_boolean:e1 COMP_MAYOR valor_boolean:e2      {: RESULT = tab.resultado_menor(e2,e1); :}
+    | valor_boolean:e1 MENORQ valor_boolean:e2          {: RESULT = tab.resultado_menor(e1,e2); :}
+    | valor_boolean:e1 MAYORQ valor_boolean:e2          {: RESULT = tab.resultado_mayor(e1,e2); :}
+    | PARENTESISA valor_boolean:e1 PARENTESISC          {: RESULT = e1; :}
+    | expr:e1                                           {: RESULT = e1; :}
+;
+
+expr ::=
+    expr:e1 MAS expr:e2                                 {: RESULT = tab.resultado_suma(e1,e2); :}
+    | expr:e1 MENOS expr:e2                             {: RESULT = tab.resultado_resta(e1,e2); :}
+    | expr:e1 POR expr:e2                               {: RESULT = tab.resultado_mult(e1,e2); :}
+    | expr:e1 ENTRE expr:e2                             {: RESULT = tab.resultado_div(e1,e2); :}
+    | MENOS expr:e1                                     {: RESULT = tab.resultado_cambio(e1); :}
+    %prec UMINUS
+    | dato:e1                                           {: RESULT = e1; :}
+    | PARENTESISA expr:e1 PARENTESISC                   {: RESULT = e1; :}
+;
+
+dato::=
+    COMILLAS STRING:e1 COMILLAS {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",1); temp.put("valor",e1.toString()); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
+    | APOS OCHAR:e1 APOS {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",3); temp.put("valor",e1.toString().charAt(0)); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
+    | DECIMAL:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",2); temp.put("valor",Double.parseDouble(e1.toString())); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
+    | NUMERO:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",0); temp.put("valor",Integer.parseInt(e1.toString())); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
+    | BOOLEAN:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",4); boolean agregar = e1.toString().equalsIgnoreCase("true");  temp.put("valor",agregar); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
+    | IDENTIFICADOR:e1 {:  :}
+;
+
+bloque_ids::=
+    identificador bloque_idsP
+;
+
+bloque_idsP::=
+    | COMA bloque_ids
+;
+
+global::=
+    | MODO
+;

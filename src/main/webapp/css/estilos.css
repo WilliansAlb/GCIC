@@ -1,0 +1,122 @@
+*{
+    font-family: 'Roboto', sans-serif;
+}
+textarea {
+    background: url(http://i.imgur.com/2cOaJ.png);
+    background-attachment: local;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    padding-top: 10px;
+    border-color: #ccc;
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: bold;
+    width: 100%;
+    color: #005761;
+}
+
+.textarea-wrapper {
+    display: inline-block;
+    background-image: linear-gradient(#F0F0F0 50%, #A9D4D9 50%);
+    background-size: 100% 32px;
+    background-position: left 10px;
+}
+
+.main{
+    display: grid;
+    grid-template-columns: 100%;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    margin: auto;
+}
+
+body{
+    background-color: #5B9EA6;
+    display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.group-4{
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    margin: auto;
+}
+#oculto{
+    margin: 0;
+}
+
+svg#clouds {
+    position: fixed;
+    bottom: -160px;
+    left: -230px;
+    z-index: -10;
+    width: 1920px;
+    fill-opacity: 0.5;
+  }
+  
+  
+  header {
+	width: 100%;
+	height: 5rem;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
+
+header > div {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+}
+
+#title {
+	width: 100%;
+    color: white;
+}
+
+#title .parent {
+	line-height: 1em;
+	color: rgb(216, 255, 144);
+}
+
+#title .name {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: rgb(207, 243, 141);
+	mix-blend-mode: difference;
+}
+
+#reference {
+	display: flex;
+        align-items: center;
+}
+
+#reference > a {
+	color: #444;
+}
+
+#reference > a + a {
+	margin-left: 1rem;
+}
+
+#blurry-filter {
+	width: 100%;
+	height: 5rem;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 2;
+	pointer-events: none;
+	touch-action: none;
+        background-color: #005761;
+        box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
+-webkit-box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
+-moz-box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
+}
