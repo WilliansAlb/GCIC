@@ -23,7 +23,7 @@ espacio=[\t|\r|\n]+
 fecha = [12][09]([9][0-9]|[012][0-9])"-"([0][1-9]|[1][0-2])"-"([0][1-9]|[1-2][0-9]|[3][01])
 esp = [ ]+
 url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
-%state STRING,COMENT_LINE,MULTI_COMENT,TEXTO,CARACTER,SCRIPTING,PARAMETROS
+%state STRING,COMENT_LINE,MULTI_COMENT,TEXTO,CARACTER,SCRIPTING,PARAMETROS,PARAMETROS2
 %{
     private Symbol symbol(int type, Object value){
         return new Symbol(type, yyline, yycolumn, value);
@@ -139,6 +139,24 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     {espacio}           {/*Ignore*/}
 }
 
+<PARAMETROS2>{
+    ("\"")                      {yybegin(CARACTER); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
+    {H}                         {return new Symbol(sym.HEX, yycolumn, yyline, yytext());}
+    ("-")?{D}                        {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
+    {D}("px")                 {return new Symbol(sym.PIXELS, yycolumn, yyline, yytext());}
+    {D}("%")                  {return new Symbol(sym.PORC, yycolumn, yyline, yytext());}
+    ("-")?{DEC}                        {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
+    ("black"|"olive"|"teal"|"red"|"blue"|"maroon"|"navy"|"gray"|"lime"|"fucsia"|"green"|"white"|"green"|"purple"|"silver"|"yellow"|"aqua")              {return new Symbol(sym.COLORES, yycolumn, yyline, yytext());}
+    ("Courier"|"Verdana"|"Arial"|"Geneva"|"sans-serif")              {return new Symbol(sym.FUENTES, yycolumn, yyline, yytext());}
+    ("center"|"left"|"right"|"justify")              {return new Symbol(sym.ALIGN, yycolumn, yyline, yytext());}
+    ("text"|"number"|"radio"|"checkbox")              {return new Symbol(sym.TIPOS, yycolumn, yyline, yytext());}
+    ("row"|"column")              {return new Symbol(sym.CLASE, yycolumn, yyline, yytext());}
+    {ID}                        {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
+    {url}                       {return new Symbol(sym.URL, yycolumn, yyline, yytext());}
+    [^\"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    {espacio}           {/*Ignore*/}
+}
+
 <TEXTO>{
     ("<")                      {yybegin(YYINITIAL); return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
     [^"<"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
@@ -151,6 +169,48 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
 
 <CARACTER>{
     ("'")                      {yybegin(SCRIPTING); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
+    "<"                     {return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+    ">"                     {return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
+    "</"                     {return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
+    "="                     {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
+    "["                     {return new Symbol(sym.CORCHETEA, yycolumn, yyline, yytext());}
+    "]"                     {return new Symbol(sym.CORCHETEC, yycolumn, yyline, yytext());}
+    "C_GCIC"                 {return new Symbol(sym.GCIC, yycolumn, yyline, yytext());}
+    "C_HEAD"                 {return new Symbol(sym.HEAD, yycolumn, yyline, yytext());}
+    "C_TITLE"                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
+    "C_LINK"                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
+    "C_BODY"                 {return new Symbol(sym.BODY, yycolumn, yyline, yytext());}
+    "C_SPAM"                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
+    "C_INPUT"                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
+    "C_TEXTAREA"                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
+    "C_SELECT"                {return new Symbol(sym.SELECT,yycolumn,yyline,yytext());}
+    "C_OPTION"                {return new Symbol(sym.OPTION,yycolumn,yyline,yytext());}
+    "C_DIV"                 {return new Symbol(sym.DIV,yycolumn,yyline,yytext());}
+    "C_IMG"                 {return new Symbol(sym.IMG,yycolumn,yyline,yytext());}
+    "C_BR"          {return new Symbol(sym.BR, yycolumn, yyline, yytext());}
+    "C_BUTTON"               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
+    "C_H1"            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
+    "C_P"              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
+    "C_SCRIPTING"              {yybegin(SCRIPTING);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
+    "ON_LOAD"              {return new Symbol(sym.ONLOAD, yycolumn, yyline, yytext());}
+    "href"              {return new Symbol(sym.HREF, yycolumn, yyline, yytext());}
+    "background"              {return new Symbol(sym.BG, yycolumn, yyline, yytext());}
+    "color"              {return new Symbol(sym.COLOR, yycolumn, yyline, yytext());}
+    "font-size"              {return new Symbol(sym.FTS, yycolumn, yyline, yytext());}
+    "font-family"              {return new Symbol(sym.FTF, yycolumn, yyline, yytext());}
+    "text-align"              {return new Symbol(sym.TXTA, yycolumn, yyline, yytext());}
+    "type"              {return new Symbol(sym.TYPE, yycolumn, yyline, yytext());}
+    "id"              {return new Symbol(sym.ID, yycolumn, yyline, yytext());}
+    "name"              {return new Symbol(sym.NAME, yycolumn, yyline, yytext());}
+    "cols"              {return new Symbol(sym.COLS, yycolumn, yyline, yytext());}
+    "rows"              {return new Symbol(sym.ROWS, yycolumn, yyline, yytext());}
+    "class"              {return new Symbol(sym.CLASS, yycolumn, yyline, yytext());}
+    "src"              {return new Symbol(sym.SRC, yycolumn, yyline, yytext());}
+    "width"              {return new Symbol(sym.WIDTH, yycolumn, yyline, yytext());}
+    "height"              {return new Symbol(sym.HEIGHT, yycolumn, yyline, yytext());}
+    "alt"              {return new Symbol(sym.ALT, yycolumn, yyline, yytext());}
+    "onclick"              {return new Symbol(sym.ONC, yycolumn, yyline, yytext());}
+    ("\"")              {yybegin(PARAMETROS2); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
     {L2}                       {return new Symbol(sym.OCHAR, yycolumn, yyline, yytext()); }
     {ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
     [^]                        {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}

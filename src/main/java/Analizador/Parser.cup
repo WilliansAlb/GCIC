@@ -372,6 +372,66 @@ instruccion::=
     declaracion
     | asignacion
     | llamada
+    | if
+    | repeat
+    | while
+    | insert
+;
+
+if::=
+    IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif else
+;
+
+elseif::=
+    | ELSE IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif
+;
+
+else::=
+    | ELSE bloque_instrucciones
+;
+
+repeat::=
+    REPEAT PARENTESISA condicion PARENTESISC HUNTIL PARENTESISA condicion2 PARENTESISC bloque_instrucciones
+;
+
+condicion::=
+    IDENTIFICADOR IGUAL NUMERO
+    | INT IDENTIFICADOR IGUAL NUMERO
+;
+
+condicion2::=
+    IDENTIFICADOR
+    | expr
+;
+
+while::=
+    WHILE PARENTESISA valor_boolean PARENTESISC THENW bloque_instrucciones
+;
+
+bloque_instrucciones::=
+    INIT LLAVEA DOSP bloque_codigo DOSP LLAVEC END
+    | bloque_codigo
+;
+
+insert::=
+    INSERT PARENTESISA lista_tokens PARENTESISC PUNTOC
+;
+
+lista_tokens::=
+    lista_tokens COMA token
+    | token
+;
+
+token::=
+    IDENTIFICADOR
+    | APOS tipo_token APOS
+;
+
+tipo_token::=
+    STRING
+    | OCHAR
+    | IDENTIFICADOR
+    | MENORQ tipo_etiqueta
 ;
 
 llamada::=
@@ -380,11 +440,11 @@ llamada::=
 ;
 
 declaracion::=
-    tipo_dato global bloque_ids valor_asignar PUNTOC
+    tipo_dato global bloque_ids asignar PUNTOC
 ;
 
 asignacion::=
-    IDENTIFICADOR IGUAL valor_boolean PUNTOC
+    IDENTIFICADOR IGUAL valor_asignar PUNTOC
 ;
 
 entre::=
@@ -392,8 +452,12 @@ entre::=
     | COMILLAS STRING COMILLAS
 ;
 
+asignar::=
+    | IGUAL valor_asignar
+;
+
 valor_asignar::=
-    | IGUAL valor_boolean
+    valor_boolean
     | GET_ELEMENT PARENTESISA APOS IDENTIFICADOR APOS PARENTESISC
     | ASC PARENTESISA entre PARENTESISC
     | DESC PARENTESISA entre PARENTESISC
