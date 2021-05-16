@@ -1,6 +1,7 @@
 package Analizador;
 
 import java_cup.runtime.Symbol;
+import org.apache.commons.lang3.StringUtils;
 %%
 %class Lexer
 %type java_cup.runtime.Symbol
@@ -15,15 +16,16 @@ L2=[a-zA-Z]
 ID = [a-zA-Z]([a-zA-Z]|"_"|[0-9])*
 D= [1-9][0-9]*
 H=#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})
-DEC = [1-9][0-9]*["."][0-9]?[0-9]?[0-9]?[1-9]
+DEC = ([0-9]|[1-9][0-9]*)["."][0-9]?[0-9]?[0-9]?[1-9]
 C=[@_"-"%#&:]+
 C2=[@_%#&:.]+
 C3=["[""]""!"#$%&"'""("")""*""+",/:;="-"_~"?"@.]
 espacio=[\t|\r|\n]+
 fecha = [12][09]([9][0-9]|[012][0-9])"-"([0][1-9]|[1][0-2])"-"([0][1-9]|[1-2][0-9]|[3][01])
 esp = [ ]+
-url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
-%state STRING,COMENT_LINE,MULTI_COMENT,TEXTO,CARACTER,SCRIPTING,PARAMETROS,PARAMETROS2
+url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
+%state STRING,COMENT_LINE,MULTI_COMENT,COMENT_LINE2,MULTI_COMENT2,COMENT_LINE3,MULTI_COMENT3,TEXTO,ETIQUETA,CARACTER,SCRIPTING,PARAMETROS,PARAMETROS2
+%state TEXTO2
 %{
     private Symbol symbol(int type, Object value){
         return new Symbol(type, yyline, yycolumn, value);
@@ -77,10 +79,10 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
 <YYINITIAL> ")"              {return new Symbol(sym.PARENTESISC, yycolumn, yyline, yytext());}
 <YYINITIAL> "["              {return new Symbol(sym.CORCHETEA, yycolumn, yyline, yytext());}
 <YYINITIAL> "]"              {return new Symbol(sym.CORCHETEC, yycolumn, yyline, yytext());}
-<YYINITIAL> "</"              {return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
 <YYINITIAL> ">"              {yybegin(TEXTO); return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
 <YYINITIAL> "="              {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
 <YYINITIAL> "<"              {return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+<YYINITIAL> "</"              {return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
 <YYINITIAL> "=="              {return new Symbol(sym.COMP_IGUAL, yycolumn, yyline, yytext());}
 <YYINITIAL> "!="              {return new Symbol(sym.COMP_DIF, yycolumn, yyline, yytext());}
 <YYINITIAL> "<="              {return new Symbol(sym.COMP_MENOR, yycolumn, yyline, yytext());}
@@ -121,6 +123,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
 <YYINITIAL> "WHILE"              {return new Symbol(sym.WHILE, yycolumn, yyline, yytext());}
 <YYINITIAL> "THENWHILE"              {return new Symbol(sym.THENW, yycolumn, yyline, yytext());}
 <YYINITIAL> "INSERT"              {return new Symbol(sym.INSERT, yycolumn, yyline, yytext());}
+<YYINITIAL> "REDIRECT"              {return new Symbol(sym.REDIRECT, yycolumn, yyline, yytext());}
 <PARAMETROS>{
     ("\"")                      {yybegin(YYINITIAL); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
     {H}                         {return new Symbol(sym.HEX, yycolumn, yyline, yytext());}
@@ -134,13 +137,13 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     ("text"|"number"|"radio"|"checkbox")              {return new Symbol(sym.TIPOS, yycolumn, yyline, yytext());}
     ("row"|"column")              {return new Symbol(sym.CLASE, yycolumn, yyline, yytext());}
     {ID}                        {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
+    {ID}"()"                        {return new Symbol(sym.PROCESS, yycolumn, yyline, yytext());}
     {url}                       {return new Symbol(sym.URL, yycolumn, yyline, yytext());}
-    [^\"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
-    {espacio}           {/*Ignore*/}
+    [^\"]+                {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
 }
 
 <PARAMETROS2>{
-    ("\"")                      {yybegin(CARACTER); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
+    ("\"")                      {yybegin(ETIQUETA); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
     {H}                         {return new Symbol(sym.HEX, yycolumn, yyline, yytext());}
     ("-")?{D}                        {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
     {D}("px")                 {return new Symbol(sym.PIXELS, yycolumn, yyline, yytext());}
@@ -158,28 +161,46 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
 }
 
 <TEXTO>{
-    ("<")                      {yybegin(YYINITIAL); return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
-    [^"<"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    ("<")                       {yybegin(YYINITIAL); return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+    ("</")                       {yybegin(YYINITIAL); return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
+    ("!!")                      {yybegin(COMENT_LINE3);}
+    ("<!--")                    {yybegin(MULTI_COMENT3);}
+    [^"!!""<""</"]+             {if (!StringUtils.isBlank(yytext())) return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    {espacio}           {/*Ignore*/}
+}
+
+<TEXTO2>{
+    ("<")                       {yybegin(ETIQUETA); return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+    ("</")                       {yybegin(ETIQUETA); return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
+    ("'")                       {yybegin(SCRIPTING); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
+    [^"'""<""</"]+             {if (!StringUtils.isBlank(yytext())) return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    {espacio}           {/*Ignore*/}
+    {esp}           {/*Ignore*/}
 }
 
 <STRING>{
     ("\"")                      {yybegin(SCRIPTING); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
-    [^\"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    [^"\""]+                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
 }
 
 <CARACTER>{
     ("'")                      {yybegin(SCRIPTING); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
-    "<"                     {return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
-    ">"                     {return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
+    "<"                        {yybegin(ETIQUETA); return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+    {L2}                       {return new Symbol(sym.OCHAR, yycolumn, yyline, yytext()); }
+    {ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
+    {espacio}           {/*Ignore*/}
+    [^"'""<"]+                        {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+}
+
+<ETIQUETA>{
+    "'"                     {yybegin(SCRIPTING); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
+    ">"                     {yybegin(TEXTO2);return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
     "</"                     {return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
     "="                     {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
     "["                     {return new Symbol(sym.CORCHETEA, yycolumn, yyline, yytext());}
     "]"                     {return new Symbol(sym.CORCHETEC, yycolumn, yyline, yytext());}
-    "C_GCIC"                 {return new Symbol(sym.GCIC, yycolumn, yyline, yytext());}
-    "C_HEAD"                 {return new Symbol(sym.HEAD, yycolumn, yyline, yytext());}
     "C_TITLE"                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
     "C_LINK"                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
-    "C_BODY"                 {return new Symbol(sym.BODY, yycolumn, yyline, yytext());}
     "C_SPAM"                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
     "C_INPUT"                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
     "C_TEXTAREA"                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
@@ -191,8 +212,6 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     "C_BUTTON"               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
     "C_H1"            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
     "C_P"              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
-    "C_SCRIPTING"              {yybegin(SCRIPTING);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
-    "ON_LOAD"              {return new Symbol(sym.ONLOAD, yycolumn, yyline, yytext());}
     "href"              {return new Symbol(sym.HREF, yycolumn, yyline, yytext());}
     "background"              {return new Symbol(sym.BG, yycolumn, yyline, yytext());}
     "color"              {return new Symbol(sym.COLOR, yycolumn, yyline, yytext());}
@@ -211,9 +230,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     "alt"              {return new Symbol(sym.ALT, yycolumn, yyline, yytext());}
     "onclick"              {return new Symbol(sym.ONC, yycolumn, yyline, yytext());}
     ("\"")              {yybegin(PARAMETROS2); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
-    {L2}                       {return new Symbol(sym.OCHAR, yycolumn, yyline, yytext()); }
-    {ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
-    [^]                        {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    {espacio}           {/*Ignore*/}
 }
 
 <COMENT_LINE>{
@@ -226,20 +243,43 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     [^"-->"]                       { }
 }
 
+<COMENT_LINE3>{
+    ("\n")                      {yybegin(TEXTO);}
+    [^\n]+                       { }
+}
+
+<MULTI_COMENT3>{
+    ("-->")                      {yybegin(TEXTO);}
+    [^"-->"]+                       { }
+}
+
+<COMENT_LINE2>{
+    ("\n")                      {yybegin(SCRIPTING);}
+    [^\n]                       { }
+}
+
+<MULTI_COMENT2>{
+    ("-->")                      {yybegin(SCRIPTING);}
+    [^"-->"]                       { }
+}
+
 <SCRIPTING>{
     ("C_SCRIPTING")             {yybegin(YYINITIAL);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
     ("'")                       {yybegin(CARACTER); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
     ("\"")                      {yybegin(STRING); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
     (",")                       {return new Symbol(sym.COMA, yycolumn, yyline, yytext());}
-    "="              {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
-    "=="              {return new Symbol(sym.COMP_IGUAL, yycolumn, yyline, yytext());}
-    ">"              {return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
-    "<"              {return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
-    "!="              {return new Symbol(sym.COMP_DIF, yycolumn, yyline, yytext());}
-    "<="              {return new Symbol(sym.COMP_MENOR, yycolumn, yyline, yytext());}
-    "=>"              {return new Symbol(sym.COMP_MAYOR, yycolumn, yyline, yytext());}
-    "||"              {return new Symbol(sym.OR, yycolumn, yyline, yytext());}
-    "&&"              {return new Symbol(sym.AND, yycolumn, yyline, yytext());}
+    ("!!")                      {yybegin(COMENT_LINE2);}
+    ("<!--")                    {yybegin(MULTI_COMENT2);}
+    "="                         {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
+    "=="                        {return new Symbol(sym.COMP_IGUAL, yycolumn, yyline, yytext());}
+    ">"                         {return new Symbol(sym.MAYORQ, yycolumn, yyline, yytext());}
+    "<"                         {return new Symbol(sym.MENORQ, yycolumn, yyline, yytext());}
+    "</"                         {return new Symbol(sym.FINETIQUETA, yycolumn, yyline, yytext());}
+    "!="                        {return new Symbol(sym.COMP_DIF, yycolumn, yyline, yytext());}
+    "<="                        {return new Symbol(sym.COMP_MENOR, yycolumn, yyline, yytext());}
+    ">="                        {return new Symbol(sym.COMP_MAYOR, yycolumn, yyline, yytext());}
+    "||"                        {return new Symbol(sym.OR, yycolumn, yyline, yytext());}
+    "&&"                        {return new Symbol(sym.AND, yycolumn, yyline, yytext());}
     "!"              {return new Symbol(sym.NOT, yycolumn, yyline, yytext());}
     "+"              {return new Symbol(sym.MAS, yycolumn, yyline, yytext());}
     "-"              {return new Symbol(sym.MENOS, yycolumn, yyline, yytext());}
@@ -247,6 +287,8 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     "/"              {return new Symbol(sym.ENTRE, yycolumn, yyline, yytext());}
     "("              {return new Symbol(sym.PARENTESISA, yycolumn, yyline, yytext());}
     ")"              {return new Symbol(sym.PARENTESISC, yycolumn, yyline, yytext());}
+    "["              {return new Symbol(sym.CORCHETEA, yycolumn, yyline, yytext());}
+    "]"              {return new Symbol(sym.CORCHETEC, yycolumn, yyline, yytext());}
     "ASC"              {return new Symbol(sym.ASC, yycolumn, yyline, yytext());}
     "DESC"              {return new Symbol(sym.DESC, yycolumn, yyline, yytext());}
     "LETPAR_NUM"              {return new Symbol(sym.FPAR, yycolumn, yyline, yytext());}
@@ -256,6 +298,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     "NUM_ALEATORIO"              {return new Symbol(sym.FNUM, yycolumn, yyline, yytext());}
     "ALERT_INFO"              {return new Symbol(sym.ALERT, yycolumn, yyline, yytext());}
     "EXIT"              {return new Symbol(sym.EXIT, yycolumn, yyline, yytext());}
+    "ON_LOAD"              {return new Symbol(sym.ONLOAD, yycolumn, yyline, yytext());}
     "integer"              {return new Symbol(sym.INT, yycolumn, yyline, yytext());}
     "boolean"              {return new Symbol(sym.BOOLEAND, yycolumn, yyline, yytext());}
     ("true"|"false")              {return new Symbol(sym.BOOLEAN, yycolumn, yyline, yytext());}
@@ -276,6 +319,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
     "WHILE"              {return new Symbol(sym.WHILE, yycolumn, yyline, yytext());}
     "THENWHILE"              {return new Symbol(sym.THENW, yycolumn, yyline, yytext());}
     "INSERT"              {return new Symbol(sym.INSERT, yycolumn, yyline, yytext());}
+    "PROCESS_"{ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
     {D}                         {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
     {DEC}                         {return new Symbol(sym.DECIMAL, yycolumn, yyline, yytext());}
 }
@@ -283,4 +327,4 @@ url = ("https://")?{L}({L})*"."{L}({L})*".com/"(({L}|{D}|{C3})*("/")?)*
 {esp} {/*ignore*/}
 {espacio}           {/*Ignore*/}
 /* error fallback */
-    .                              { return new Symbol(sym.ERRORLEX,yycolumn,yyline,yytext()); }
+    [^]                              { return new Symbol(sym.ERRORLEX,yycolumn,yyline,yytext()); }

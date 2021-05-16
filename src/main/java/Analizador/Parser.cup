@@ -1,15 +1,43 @@
 package Analizador;
 
 import java_cup.runtime.Symbol;
-import com.hp.gagawa.java.elements.*;
+import Generador.html;
+import com.hp.gagawa.java.Node;
+import com.hp.gagawa.java.elements.Body;
+import com.hp.gagawa.java.elements.Br;
+import com.hp.gagawa.java.elements.Button;
+import com.hp.gagawa.java.elements.Div;
+import com.hp.gagawa.java.elements.H1;
+import com.hp.gagawa.java.elements.Head;
+import com.hp.gagawa.java.elements.Html;
+import com.hp.gagawa.java.elements.Img;
+import com.hp.gagawa.java.elements.Input;
+import com.hp.gagawa.java.elements.Link;
+import com.hp.gagawa.java.elements.P;
+import com.hp.gagawa.java.elements.Span;
+import com.hp.gagawa.java.elements.Textarea;
+import com.hp.gagawa.java.elements.Title;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import Tablas.Tabla;
+import POJOS.Variable;
+import com.hp.gagawa.java.elements.Option;
+import com.hp.gagawa.java.elements.Script;
+import com.hp.gagawa.java.elements.Select;
+import java_cup.runtime.XMLElement;
 
 parser code
 {:
     private Symbol sym;
     public Tabla tab = new Tabla();
-    public Html tab = new Html();
-    
+    public Html retorno = new Html();
+    public html html = new html();
+    public Script funciones = new Script("");
+    public String escribir = "";
+    public ArrayList<Variable> globales = new ArrayList<>();
+    public ArrayList<Variable> todas = new ArrayList<>();
+    public ArrayList<Variable> locales = new ArrayList<>();
     public Symbol getS(){
         return this.sym;
     }
@@ -17,6 +45,21 @@ parser code
     public void report_fatal_error(String message, Object info) {
         System.out.println("reportfatal "+message+info);
     }
+
+    public Variable existe(String id){
+        for (int i = 0; i < globales.size(); i++){
+            if (globales.get(i).getId().equals(id)){
+                return globales.get(i);
+            }
+        }
+        for (int i = 0; i < locales.size(); i++){
+            if (locales.get(i).getId().equals(id)){
+                return locales.get(i);
+            }
+        }
+        return null;
+    }
+    
     public void report_fatal_error(Symbol cur) {
         System.out.println("unrecovered_syntax_error");
     }
@@ -41,16 +84,16 @@ terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TEXTAREA, SELECT, OPTION, D
     PARENTESISC, LLAVEA, LLAVEC, CORCHETEA, CORCHETEC, MODO, FINETIQUETA, MAYORQ, MENORQ, COMP_IGUAL, COMP_DIF,
     COMP_MENOR, COMP_MAYOR, OR, AND, NOT, MAS, MENOS, POR, ENTRE, ASC, DESC, FPAR, FIMPAR, REVERSE, FCARACTER,
     FNUM, ALERT, EXIT, INT, BOOLEAN, STRING, DECIMAL, DECIMALD, CHAR, GET_ELEMENT, PUNTOC, INIT, DOSP, IF, ELSE, REPEAT,
-    HUNTIL, WHILE, THENW, THEN, INSERT, HEX, NUMERO, PIXELS, PORC, COLORES, FUENTES, ALIGN, TIPOS, CLASE,
-    URL, IGUAL, COMILLAS, SCRIPT, IDENTIFICADOR, ONLOAD, ERRORLEX, STRINGD, COMA,APOS, BOOLEAND; 
+    HUNTIL, WHILE, THENW, THEN, INSERT, HEX, NUMERO, PIXELS, PORC, COLORES, FUENTES, ALIGN, TIPOS, CLASE, PROCESS,
+    URL, IGUAL, COMILLAS, SCRIPT, IDENTIFICADOR, ONLOAD, ERRORLEX, STRINGD, COMA,APOS, BOOLEAND, REDIRECT, UMINUS, END, OCHAR; 
 
-non terminal inicio, tipo_string, bloque_etiquetas, bloque_global, bloque_etiquetasP, etiqueta, tipo_etiqueta, h1, br, img, div,
-    button, p, spam, script, input, textarea, select, bloque_opciones, bloque_opcionesP, opcion, metodo, bloque_head, string, parametros_textarea,
-    parametros_h1, parametros_input, parametros_button, parametros_div, parametros_img, bloque_codigo, parametros_gcic;
+non terminal inicio, bloque_global, parametros_gcic, head, body, bloque_opcionesP, 
+    metodo, bloque_head, link, bloque_codigo, bloque_codigo2, instruccion2, lista_metodos, bloque_instrucciones, instruccion, declaracion,
+    asignacion, llamada, if, repeat, while, insert, elseif, else, condicion, if2, repeat2, while2, asignacion2, declaracion2, asignar;
 
-non terminal HashMap<String, Object> dato, expr;
+non terminal HashMap<String, Object> dato, expr, valor_boolean;
 non terminal H1 h1;
-non terminal Div div;
+non terminal Div div, script;
 non terminal Textarea textarea;
 non terminal Select select;
 non terminal Input input;
@@ -59,101 +102,142 @@ non terminal Br br;
 non terminal Button button;
 non terminal Span spam;
 non terminal Option opcion;
-non terminal List<Option> bloque_opciones;
 non terminal P p;
+non terminal Variable valor_asignar;
+non terminal List<Node> bloque_etiquetas, bloque_opciones;
+non terminal Node tipo_etiqueta, etiqueta;
+non terminal ArrayList<String> lista_button, parametros_button, parametros_div, lista_div, parametros_img, lista_img,
+    parametros_input, lista_tokens, lista_input, parametros_h1, lista_h1, bloque_ids, parametros_textarea, lista_textarea;
+non terminal String colors, bg, class2, id, name, fts, ftf, txta, color, onc, type, src, numerico, width, height, 
+    tipo_button, tipo_div, alt, string, tipo_string, title, parametros_body, tipo_img, tipo_input, tipo_h1, token, tipo_token, global,
+    rows, cols, tipo_textarea, tipo_dato, tipo_url, entre;
 
 precedence left MAS, MENOS;
 precedence left POR, ENTRE;
 precedence left UMINUS;
-precedence left COMP_IGUAL, COMP_DIF, MENORQ, COMP_MENOR, COMP_MAYOR, MAYORQ;
 precedence left OR;
 precedence left AND;
+precedence left COMP_IGUAL, COMP_DIF, MENORQ, COMP_MENOR, COMP_MAYOR, MAYORQ;
 precedence left NOT;
 
 start with inicio;
 
 inicio::=
-    MENORQ GCIC CORCHETEA parametros_gcic MAYORQ bloque_global FINETIQUETA GCIC MAYORQ
-;
-
-tipo_string::=
-    IDENTIFICADOR
-    | STRING
+    MENORQ GCIC CORCHETEA parametros_gcic MAYORQ MENORQ bloque_global FINETIQUETA GCIC MAYORQ
 ;
 
 bloque_global ::=
-    MENORQ HEAD MAYORQ MENORQ bloque_head FINETIQUETA HEAD MAYORQ MENORQ BODY parametros_body MAYORQ bloque_etiquetas FINETIQUETA BODY MAYORQ FINETIQUETA GCIC MAYORQ
+    head MENORQ body
+    | body MENORQ head
+;
+
+body::=
+    BODY parametros_body MAYORQ bloque_etiquetas:e1 FINETIQUETA BODY MAYORQ {: Body temp = new Body(); temp.appendChild(e1); imp(new String(temp.write().getBytes(), "UTF-8")); :}
+;
+
+head::=
+    HEAD MAYORQ MENORQ bloque_head FINETIQUETA HEAD MAYORQ
 ;
 
 
 bloque_head::=
-    LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ MENORQ TITLE MAYORQ tipo_string FINETIQUETA TITLE MAYORQ
-    | TITLE MAYORQ tipo_string FINETIQUETA TITLE MAYORQ MENORQ LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ
+    link MENORQ title
+    | title MENORQ link
+;
+
+bloque_etiquetas ::=
+    bloque_etiquetas:e1 etiqueta:e2   {: e1.add(e2); RESULT = e1; :}
+    | etiqueta:e1         {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}             
+;
+
+etiqueta::=
+    MENORQ tipo_etiqueta:e1           {: RESULT = e1; :}
+;
+
+tipo_etiqueta::=
+    h1:e1           {: RESULT = e1; :}
+    | br:e1         {: RESULT = e1; :}
+    | spam:e1       {: RESULT = e1; :}
+    | script:e1     {: RESULT = e1; :}
+    | input:e1      {: RESULT = e1; :}
+    | textarea:e1   {: RESULT = e1; :}
+    | select:e1     {: RESULT = e1; :}
+    | div:e1        {: RESULT = e1; :}
+    | img:e1        {: RESULT = e1; :}
+    | button:e1     {: RESULT = e1; :}
+    | p:e1          {: RESULT = e1; :}
+;
+
+link::=
+    LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ FINETIQUETA LINK MAYORQ
+;
+
+title::=
+    TITLE MAYORQ tipo_string:e1 FINETIQUETA TITLE MAYORQ {: RESULT = "title="+e1; :}
+;
+
+tipo_string::=
+    IDENTIFICADOR:e1  {: RESULT = e1.toString(); :}
+    | STRING:e1  {: RESULT = e1.toString(); :}
 ;
 
 colors::=
-    COLORES
-    | HEX
+    COLORES:e1  {: RESULT = e1.toString(); :}
+    | HEX:e1    {: RESULT = e1.toString(); :}
 ;
 
 parametros_body::=
-    | CORCHETEA bg
+    {: RESULT = "background-color: white;"; :}| CORCHETEA bg:e1 {: RESULT = e1; :}
 ;
 
 parametros_button::=
-    | lista_button
+    {: RESULT = new ArrayList<>(); :}| lista_button:e1 {: RESULT = e1; :}
 ;
 
 lista_button::=
-    CORCHETEA tipo_button lista_buttonP
-;
-
-lista_buttonP::=
-    | lista_button
+    lista_button:e1 CORCHETEA tipo_button:e2    {: e1.add(e2); RESULT = e1; :}
+    | CORCHETEA tipo_button:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}
 ;
 
 tipo_button::=
-    fts
-    | ftf
-    | txta
-    | id
-    | color
-    | bg
-    | onc
+    fts:e1           {: RESULT = e1; :}
+    | ftf:e1           {: RESULT = e1; :}
+    | txta:e1           {: RESULT = e1; :}
+    | id:e1           {: RESULT = e1; :}
+    | color:e1           {: RESULT = e1; :}
+    | bg:e1           {: RESULT = e1; :}
+    | onc:e1           {: RESULT = e1; :}
 ;
 
 onc::=
-    ONC IGUAL COMILLAS IDENTIFICADOR PARENTESISA PARENTESISC COMILLAS CORCHETEC
+    ONC IGUAL COMILLAS PROCESS:e1 COMILLAS CORCHETEC {: RESULT = "onclick="+e1.toString();:}
 ;
 
 parametros_div::=
-    | lista_div
+    {: RESULT = new ArrayList<>(); :}| lista_div:e1 {: RESULT = e1; :}
 ;
 
 lista_div::=
-    CORCHETEA tipo_div lista_divP
-;
-
-lista_divP::=
-    | lista_div
+    lista_div:e1 CORCHETEA tipo_div:e2      {: e1.add(e2); RESULT = e1; :}
+    | tipo_div:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}
 ;
 
 tipo_div::=
-    fts
-    | ftf
-    | txta
-    | id
-    | class
-    | color
-    | bg
+    fts:e1          {: RESULT = e1;:}
+    | ftf:e1        {: RESULT = e1;:}
+    | txta:e1       {: RESULT = e1;:}
+    | id:e1         {: RESULT = e1;:}
+    | class2:e1      {: RESULT = e1;:}
+    | color:e1      {: RESULT = e1;:}
+    | bg:e1         {: RESULT = e1;:}
 ;
 
 bg::=
-    BG IGUAL COMILLAS colors COMILLAS CORCHETEC
+    BG IGUAL COMILLAS colors:e1 COMILLAS CORCHETEC {: RESULT = "background-color: "+e1+";"; :}
 ;
 
-class::=
-    CLASS IGUAL COMILLAS CLASE COMILLAS CORCHETEC
+class2::=
+    CLASS IGUAL COMILLAS CLASE:e1 COMILLAS CORCHETEC {: RESULT = "class="+e1.toString(); :}
 ;
 
 parametros_gcic::=
@@ -162,216 +246,228 @@ parametros_gcic::=
 ;
 
 parametros_img::=
-    | lista_img
+    {: RESULT = new ArrayList<>(); :}| lista_img:e1 {: RESULT = e1; :}
 ;
 
 lista_img::=
-    CORCHETEA tipo_img lista_imgP
-;
-
-lista_imgP::=
-    | lista_img
+    lista_img:e1 CORCHETEA tipo_img:e2      {: e1.add(e2); RESULT = e1; :}
+    | CORCHETEA tipo_img:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}
 ;
 
 parametros_input::=
-    | lista_input
+    {: RESULT = new ArrayList<>(); :}| lista_input:e1 {: RESULT = e1; :}
 ;
 
 lista_input::=
-    CORCHETEA tipo_input lista_inputP
-;
-
-lista_inputP::=
-    | lista_input
+    lista_input:e1 CORCHETEA tipo_input:e2      {: e1.add(e2); RESULT = e1; :}
+    | CORCHETEA tipo_input:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}
 ;
 
 tipo_input::=
-    type
-    | fts
-    | ftf
-    | txta
-    | id
+    type:e1         {: RESULT = e1;:}
+    | fts:e1        {: RESULT = e1;:}
+    | ftf:e1        {: RESULT = e1;:}
+    | txta:e1       {: RESULT = e1;:}
+    | id:e1         {: RESULT = e1;:}
 ;
 
 tipo_img::=
-    src
-    | width
-    | height
-    | alt
-    | id
+    src:e1              {: RESULT = e1;:}
+    | width:e1          {: RESULT = e1;:}
+    | height:e1         {: RESULT = e1;:}
+    | alt:e1            {: RESULT = e1;:}
+    | id:e1             {: RESULT = e1;:}
 ;
 
 parametros_h1::=
-    | lista_h1
+    {: RESULT = new ArrayList<>(); :}| lista_h1:e1 {: RESULT = e1; :}
 ;
 
 lista_h1::=
-    CORCHETEA tipo_h1 lista_h1P
-;
-
-lista_h1P::=
-    | lista_h1
-;   
+    lista_h1:e1 CORCHETEA tipo_h1:e2 {: e1.add(e2); RESULT = e1; :}
+    | CORCHETEA tipo_h1:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1);  :}
+; 
 
 tipo_h1::=
-    fts
-    | ftf
-    | txta
-    | id
-    | color
+    fts:e1              {: RESULT = e1;:}
+    | ftf:e1              {: RESULT = e1;:}
+    | txta:e1              {: RESULT = e1;:}
+    | id:e1              {: RESULT = e1;:}
+    | color:e1              {: RESULT = e1;:}
 ;
 
 type::=
-    TYPE IGUAL COMILLAS TIPOS COMILLAS CORCHETEC
+    TYPE IGUAL COMILLAS TIPOS:e1 COMILLAS CORCHETEC     {: RESULT = "type="+e1.toString();:}
 ;
 
 src::=
-    SRC IGUAL COMILLAS URL COMILLAS CORCHETEC
+    SRC IGUAL COMILLAS tipo_url:e1 COMILLAS CORCHETEC        {: RESULT = "src="+e1.toString();:}
+;
+
+tipo_url::=
+    URL:e1 {: RESULT = e1.toString();:}
+    | STRING:e1 {: RESULT = e1.toString();:}
 ;
 
 numerico::=
-    PIXELS
-    | POR
+    PIXELS:e1   {: RESULT = e1.toString();:}
+    | PORC:e1    {: RESULT = e1.toString();:}
 ;
 
 width::=
-    WIDTH IGUAL COMILLAS numerico COMILLAS CORCHETEC
+    WIDTH IGUAL COMILLAS numerico:e1 COMILLAS CORCHETEC    {: RESULT = "width="+e1;:}
 ;
 
 height::=
-    HEIGHT IGUAL COMILLAS numerico COMILLAS CORCHETEC
+    HEIGHT IGUAL COMILLAS numerico:e1 COMILLAS CORCHETEC    {: RESULT = "height="+e1;:}
 ;
 
 alt::=
-    ALT IGUAL COMILLAS string COMILLAS CORCHETEC
+    ALT IGUAL COMILLAS string:e1 COMILLAS CORCHETEC         {: RESULT = "alt="+e1;:}          
 ;
 
 name::=
-    NAME IGUAL COMILLAS STRING COMILLAS CORCHETEC
+    NAME IGUAL COMILLAS STRING:e1 COMILLAS CORCHETEC            {: RESULT = "name="+e1.toString();:}
 ;
 
 id::=
-    ID IGUAL COMILLAS IDENTIFICADOR COMILLAS CORCHETEC
+    ID IGUAL COMILLAS IDENTIFICADOR:e1 COMILLAS CORCHETEC       {: RESULT = "id="+e1.toString();:}
 ;
 
 fts::=
-    FTS IGUAL COMILLAS PIXELS COMILLAS CORCHETEC
+    FTS IGUAL COMILLAS PIXELS:e1 COMILLAS CORCHETEC             {: RESULT = "font-size:"+e1.toString()+";";:}
 ;
 
 ftf::=
-    FTF IGUAL COMILLAS FUENTES COMILLAS CORCHETEC
+    FTF IGUAL COMILLAS FUENTES:e1 COMILLAS CORCHETEC            {: RESULT = "font-family:"+e1.toString()+";";:}
 ;
 
 txta::=
-    TXTA IGUAL COMILLAS ALIGN COMILLAS CORCHETEC
+    TXTA IGUAL COMILLAS ALIGN:e1 COMILLAS CORCHETEC             {: RESULT = "text-align:"+e1.toString()+";";:}
 ;
 
 color::=
-    COLOR IGUAL COMILLAS colors COMILLAS CORCHETEC
-;
-
-bloque_etiquetas ::=
-    etiqueta bloque_etiquetasP
-;
-
-bloque_etiquetasP ::=
-    | bloque_etiquetas
-;
-
-etiqueta::=
-    MENORQ tipo_etiqueta
-;
-
-tipo_etiqueta::=
-    h1
-    | br
-    | spam
-    | script
-    | input
-    | textarea
-    | select
-    | div
-    | img
-    | button
-    | p
+    COLOR IGUAL COMILLAS colors:e1 COMILLAS CORCHETEC           {: RESULT = "color:"+e1+";";:}
 ;
 
 h1::=
-    H1 parametros_h1 MAYORQ string FINETIQUETA H1 MAYORQ
+    H1 parametros_h1:e1 MAYORQ string:e2 FINETIQUETA H1 MAYORQ {: H1 temp = html.parametros_h1(new H1(),e1,e2); RESULT = temp; :}
 ;
 
 br::=
-    BR MAYORQ
+    BR MAYORQ   {: RESULT = new Br(); :}
 ;
 
 img::=
-    IMG parametros_img MAYORQ
+    IMG parametros_img:e1 MAYORQ {: RESULT = html.parametros_img(new Img("",""), e1); :}
 ;
 
 div::=
-    DIV parametros_div MAYORQ bloque_etiquetas FINETIQUETA DIV MAYORQ
+    DIV parametros_div:e1 MAYORQ bloque_etiquetas:e2 FINETIQUETA DIV MAYORQ {: RESULT = html.parametros_div(new Div(), e1, e2); :} 
 ;
 
 button::=
-    BUTTON parametros_button MAYORQ string FINETIQUETA BUTTON MAYORQ
+    BUTTON parametros_button:e1 MAYORQ string:e2 FINETIQUETA BUTTON MAYORQ {: RESULT = html.parametros_button(new Button(), e1, e2); :}
 ;
 
 p::=
-    P parametros_h1 MAYORQ string FINETIQUETA P MAYORQ
+    P parametros_h1:e1 MAYORQ string:e2 FINETIQUETA P MAYORQ {: RESULT = html.parametros_p(new P(), e1, e2); :} 
 ;
 
 spam::=
-    SPAM parametros_h1 MAYORQ string FINETIQUETA SPAM MAYORQ
+    SPAM parametros_h1:e1 MAYORQ string:e2 FINETIQUETA SPAM MAYORQ {: RESULT = html.parametros_spam(new Span(), e1, e2); :} 
 ;
 
 script::=
-    SCRIPT MAYORQ metodo 
+    SCRIPT MAYORQ lista_metodos FINETIQUETA SCRIPT MAYORQ {: RESULT = new Div(); RESULT.appendText(escribir); escribir = ""; :} 
 ;
 
 input::=
-    INPUT parametros_input MAYORQ
+    INPUT parametros_input:e1 MAYORQ {: RESULT = html.parametros_input(new Input(), e1); :} 
 ;
 
 textarea::=
-    TEXTAREA parametros_textarea MAYORQ
+    TEXTAREA parametros_textarea:e1 MAYORQ {: RESULT = html.parametros_textarea(new Textarea("",""), e1); :} 
 ;
 
+parametros_textarea::=
+    {: RESULT = new ArrayList<>(); :} | lista_textarea:e1                  {: RESULT = e1;:}
+;
+
+lista_textarea::=
+    lista_textarea:e1 CORCHETEA tipo_textarea:e2 {: e1.add(e2); RESULT = e1; :}
+    | CORCHETEA tipo_textarea:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1); :}
+;
+
+tipo_textarea::=
+    fts:e1              {: RESULT = e1;:}
+    | ftf:e1              {: RESULT = e1;:}
+    | txta:e1              {: RESULT = e1;:}
+    | id:e1              {: RESULT = e1;:}
+    | cols:e1              {: RESULT = e1;:}
+    | rows:e1              {: RESULT = e1;:}
+;
+
+rows::=
+    ROWS IGUAL COMILLAS NUMERO:e1 COMILLAS CORCHETEC   {: RESULT = "rows="+e1.toString(); :}
+;
+
+cols::=
+    COLS IGUAL COMILLAS NUMERO:e1 COMILLAS CORCHETEC   {: RESULT = "cols="+e1.toString(); :}
+;
+
+
 select::=
-    SELECT parametros_h1 MAYORQ bloque_opciones FINETIQUETA SELECT MAYORQ
+    SELECT parametros_h1:e1 MAYORQ bloque_opciones:e2 FINETIQUETA SELECT MAYORQ   {: RESULT = html.parametros_select(new Select(),e1,e2); :}
 ;
 
 bloque_opciones::=
-    opcion bloque_opcionesP
-;
-
-bloque_opcionesP::=
-    | bloque_opciones
+    bloque_opciones:e1 opcion:e2    {: e1.add(e2); RESULT = e1; :}
+    | opcion:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1); :}
 ;
 
 opcion::=
-    MENORQ OPTION MAYORQ string FINETIQUETA OPTION MAYORQ
+    MENORQ OPTION MAYORQ string:e1 FINETIQUETA OPTION MAYORQ   {: Option temp = new Option(); temp.appendText(e1); RESULT = temp; :}
+;
+
+lista_metodos::=
+    lista_metodos metodo
+    | metodo
 ;
 
 metodo::=
-    ONLOAD PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC FINETIQUETA SCRIPT MAYORQ
-    | IDENTIFICADOR PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC FINETIQUETA SCRIPT MAYORQ
+    ONLOAD PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC
+    | IDENTIFICADOR PARENTESISA PARENTESISC CORCHETEA bloque_codigo2 CORCHETEC
 ;
 
 
 string::=
-    STRING
-    | NUMERO
+    STRING:e1         {: RESULT = e1.toString();:}
+    | NUMERO:e1         {: RESULT = e1.toString();:}
 ;
 
 bloque_codigo::=
-    instruccion bloque_codigo
+    bloque_codigo instruccion
     | instruccion
+;
+
+bloque_codigo2::=
+    bloque_codigo2 instruccion2
+    | instruccion2
+;
+
+instruccion2::=
+    llamada
+    | declaracion
+    | asignacion
+    | if
+    | repeat
+    | while
 ;
 
 instruccion::=
     declaracion
     | asignacion
-    | llamada
     | if
     | repeat
     | while
@@ -383,25 +479,20 @@ if::=
 ;
 
 elseif::=
-    | ELSE IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif
+    ELSE IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif
 ;
 
 else::=
-    | ELSE bloque_instrucciones
+    ELSE bloque_instrucciones
 ;
 
 repeat::=
-    REPEAT PARENTESISA condicion PARENTESISC HUNTIL PARENTESISA condicion2 PARENTESISC bloque_instrucciones
+    REPEAT PARENTESISA condicion PARENTESISC HUNTIL PARENTESISA expr PARENTESISC bloque_instrucciones
 ;
 
 condicion::=
     IDENTIFICADOR IGUAL NUMERO
     | INT IDENTIFICADOR IGUAL NUMERO
-;
-
-condicion2::=
-    IDENTIFICADOR
-    | expr
 ;
 
 while::=
@@ -410,28 +501,28 @@ while::=
 
 bloque_instrucciones::=
     INIT LLAVEA DOSP bloque_codigo DOSP LLAVEC END
-    | bloque_codigo
+    | instruccion
 ;
 
 insert::=
-    INSERT PARENTESISA lista_tokens PARENTESISC PUNTOC
+    INSERT PARENTESISA lista_tokens:e1 PARENTESISC PUNTOC   {: :}
 ;
 
 lista_tokens::=
-    lista_tokens COMA token
-    | token
+    lista_tokens:e1 COMA token:e2   {: e1.add(e2); RESULT = e1; escribir += e2; :}
+    | token:e1                      {: ArrayList<String> temp = new ArrayList<>(); temp.add(e1); RESULT = temp; escribir += e1; :}
 ;
 
 token::=
-    IDENTIFICADOR
-    | APOS tipo_token APOS
+    IDENTIFICADOR:e1            {:RESULT = e1.toString();:}
+    | APOS tipo_token:e1 APOS   {:RESULT = e1.toString();:}
 ;
 
 tipo_token::=
-    STRING
-    | OCHAR
-    | IDENTIFICADOR
-    | MENORQ tipo_etiqueta
+    STRING:e1         {: RESULT = e1.toString();:}
+    | OCHAR:e1         {: RESULT = e1.toString();:}
+    | IDENTIFICADOR:e1         {: RESULT = e1.toString();:}
+    | MENORQ tipo_etiqueta:e1  {:RESULT = e1.write();:}
 ;
 
 llamada::=
@@ -440,40 +531,40 @@ llamada::=
 ;
 
 declaracion::=
-    tipo_dato global bloque_ids asignar PUNTOC
+    tipo_dato:e1 global:e2 bloque_ids:e3 asignar:e4 PUNTOC 
 ;
 
 asignacion::=
-    IDENTIFICADOR IGUAL valor_asignar PUNTOC
+    IDENTIFICADOR:e1 IGUAL valor_asignar:e2 PUNTOC {: Variable var = existe(e1.toString()); if (var!=null) { if (var.getTipo()==1){ RESULT = (String) var.getValor(); } else { RESULT = "ERROR:No es un string"; }} else { RESULT = "ERROR:No se ha declarado la variable";} :}
 ;
 
-entre::=
-    IDENTIFICADOR
-    | COMILLAS STRING COMILLAS
-;
 
 asignar::=
-    | IGUAL valor_asignar
+    | IGUAL valor_asignar:e1 {: imp(e1.getValor().toString());:}
 ;
 
 valor_asignar::=
-    valor_boolean
-    | GET_ELEMENT PARENTESISA APOS IDENTIFICADOR APOS PARENTESISC
-    | ASC PARENTESISA entre PARENTESISC
-    | DESC PARENTESISA entre PARENTESISC
-    | FPAR PARENTESISA entre PARENTESISC
-    | FIMPAR PARENTESISA entre PARENTESISC
-    | REVERSE PARENTESISA entre PARENTESISC
-    | FCARACTER PARENTESISA PARENTESISC
-    | FNUM PARENTESISA entre PARENTESISC
+    valor_boolean:e1 {: Variable var = new Variable(); var.setTipo((int)e1.get("tipo")); var.setValor(e1.get("valor")); RESULT = var; :}
+    | ASC PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.asc(e1); :}
+    | DESC PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.desc(e1); :}
+    | FPAR PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.letpar_num(e1); :}
+    | FIMPAR PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.letimpar_num(e1); :}
+    | REVERSE PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.reverse(e1); :}
+    | FCARACTER PARENTESISA PARENTESISC {: RESULT = new Variable(); RESULT.char_aleatorio(); :}
+    | FNUM PARENTESISA PARENTESISC {: RESULT = new Variable(); RESULT.num_aleatorio(); :}
+;
+
+entre::=
+    IDENTIFICADOR:e1 {: Variable var = existe(e1.toString()); if (var!=null) { if (var.getTipo()==1){ RESULT = (String) var.getValor(); } else { RESULT = "ERROR:No es un string"; }} else { RESULT = "ERROR:No se ha declarado la variable";} :}
+    | COMILLAS STRING:e1 COMILLAS {: RESULT = e1.toString(); :}
 ;
 
 tipo_dato::=
-    INT
-    | STRINGD
-    | DECIMALD
-    | CHAR
-    | BOOLEAND
+    INT:e1 {: RESULT = "0"; :}
+    | STRINGD:e1 {: RESULT = "1"; :}
+    | DECIMALD:e1 {: RESULT = "2"; :}
+    | CHAR:e1 {: RESULT = "3"; :}
+    | BOOLEAND:e1 {: RESULT = "4"; :}
 ;
 
 valor_boolean::=
@@ -486,7 +577,6 @@ valor_boolean::=
     | valor_boolean:e1 COMP_MAYOR valor_boolean:e2      {: RESULT = tab.resultado_menor(e2,e1); :}
     | valor_boolean:e1 MENORQ valor_boolean:e2          {: RESULT = tab.resultado_menor(e1,e2); :}
     | valor_boolean:e1 MAYORQ valor_boolean:e2          {: RESULT = tab.resultado_mayor(e1,e2); :}
-    | PARENTESISA valor_boolean:e1 PARENTESISC          {: RESULT = e1; :}
     | expr:e1                                           {: RESULT = e1; :}
 ;
 
@@ -507,17 +597,14 @@ dato::=
     | DECIMAL:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",2); temp.put("valor",Double.parseDouble(e1.toString())); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
     | NUMERO:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",0); temp.put("valor",Integer.parseInt(e1.toString())); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
     | BOOLEAN:e1 {: HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",4); boolean agregar = e1.toString().equalsIgnoreCase("true");  temp.put("valor",agregar); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; :}
-    | IDENTIFICADOR:e1 {:  :}
+    | IDENTIFICADOR:e1 {: Variable var = existe(e1.toString()); if (var!=null) {HashMap<String, Object> temp = new HashMap<>(); temp.put("tipo",var.getTipo()); temp.put("valor",var.getValor()); temp.put("row",e1left); temp.put("col",e1right); RESULT = temp; } else { RESULT = new HashMap<>(); RESULT.put("tipo",5); RESULT.put("valor","no se ha declarado la variable en la posicion "+e1left+","+e1right); }:}
 ;
 
 bloque_ids::=
-    identificador bloque_idsP
-;
-
-bloque_idsP::=
-    | COMA bloque_ids
+    bloque_ids:e1 COMA IDENTIFICADOR:e2     {: e1.add(e2.toString()); RESULT = e1; :}
+    | IDENTIFICADOR:e1 {: RESULT = new ArrayList<>(); RESULT.add(e1.toString()); :}
 ;
 
 global::=
-    | MODO
+    {: RESULT = "-"; :}| MODO:e1 {: RESULT = e1.toString(); :}
 ;

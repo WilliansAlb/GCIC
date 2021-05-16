@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Tablas;
+package Controladores;
 
+import POJOS.Variable;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -292,6 +294,7 @@ public class Tabla {
         HashMap<String, Object> retorno = new HashMap<>();
         retorno.put("tipo", ERROR);
         retorno.put("valor", null);
+        System.out.println("or");
         int tipo1 = (int) izquierda.get("tipo");
         int tipo2 = (int) derecha.get("tipo");
         if (tipo1 == ERROR || tipo2 == ERROR) {
@@ -410,21 +413,28 @@ public class Tabla {
             retorno.put("tipo", ERROR0);
         } else {
             if ((tipo1 == DECIMAL && tipo2 == INT) || (tipo2 == DECIMAL && tipo1 == INT)) {
-                if ((double) izquierda.get("valor") == (double) derecha.get("valor")) {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", true);
+                boolean ret;
+                if (tipo1 == tipo2) {
+                    if (tipo1 == DECIMAL) {
+                        ret = (double) izquierda.get("valor") == (double) derecha.get("valor");
+                    } else {
+                        ret = (int) izquierda.get("valor") == (int) derecha.get("valor");
+                    }
+                } else if (tipo1 == DECIMAL && tipo2 == INT) {
+                    ret = (double) izquierda.get("valor") == (int) derecha.get("valor");
                 } else {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", false);
+                    ret = (int) izquierda.get("valor") == (double) derecha.get("valor");
                 }
+                retorno.put("tipo", BOOLEAN);
+                retorno.put("valor", ret);
             } else {
                 if (tipo1 == tipo2) {
                     if (izquierda.get("valor").equals(derecha.get("valor"))) {
                         retorno.put("tipo", BOOLEAN);
-                        retorno.put("tipo", true);
+                        retorno.put("valor", true);
                     } else {
                         retorno.put("tipo", BOOLEAN);
-                        retorno.put("tipo", false);
+                        retorno.put("valor", false);
                     }
                 } else {
                     retorno.put("tipo", ERROR);
@@ -447,80 +457,33 @@ public class Tabla {
             retorno.put("tipo", ERROR0);
         } else {
             if ((tipo1 == DECIMAL && tipo2 == INT) || (tipo2 == DECIMAL && tipo1 == INT)) {
-                if ((double) izquierda.get("valor") != (double) derecha.get("valor")) {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", true);
+                boolean ret;
+                if (tipo1 == tipo2) {
+                    if (tipo1 == DECIMAL) {
+                        ret = (double) izquierda.get("valor") != (double) derecha.get("valor");
+                    } else {
+                        ret = (int) izquierda.get("valor") != (int) derecha.get("valor");
+                    }
+                } else if (tipo1 == DECIMAL && tipo2 == INT) {
+                    ret = (double) izquierda.get("valor") != (int) derecha.get("valor");
                 } else {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", false);
+                    ret = (int) izquierda.get("valor") != (double) derecha.get("valor");
                 }
+                retorno.put("tipo", BOOLEAN);
+                retorno.put("valor", ret);
             } else {
                 if (tipo1 == tipo2) {
                     if (!izquierda.get("valor").equals(derecha.get("valor"))) {
                         retorno.put("tipo", BOOLEAN);
-                        retorno.put("tipo", true);
+                        retorno.put("valor", true);
                     } else {
                         retorno.put("tipo", BOOLEAN);
-                        retorno.put("tipo", false);
+                        retorno.put("valor", false);
                     }
                 } else {
                     retorno.put("tipo", ERROR);
                     retorno.put("valor", "datos comparados incompatibles");
                 }
-            }
-        }
-        return retorno;
-    }
-
-    public HashMap<String, Object> resultado_mei(HashMap<String, Object> izquierda, HashMap<String, Object> derecha) {
-        HashMap<String, Object> retorno = new HashMap<>();
-        retorno.put("tipo", ERROR);
-        retorno.put("valor", null);
-        int tipo1 = (int) izquierda.get("tipo");
-        int tipo2 = (int) derecha.get("tipo");
-        if (tipo1 == ERROR || tipo2 == ERROR) {
-            retorno.put("valor", null);
-        } else if (tipo1 == ERROR0 || tipo2 == ERROR0) {
-            retorno.put("tipo", ERROR0);
-        } else {
-            if ((tipo1 == DECIMAL || tipo1 == INT) && (tipo2 == DECIMAL || tipo2 == INT)) {
-                if ((double) izquierda.get("valor") <= (double) derecha.get("valor")) {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", true);
-                } else {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", false);
-                }
-            } else {
-                retorno.put("tipo", ERROR);
-                retorno.put("valor", "Los datos ingresados no pueden ser comparados por el operador <=");
-            }
-        }
-        return retorno;
-    }
-
-    public HashMap<String, Object> resultado_mai(HashMap<String, Object> izquierda, HashMap<String, Object> derecha) {
-        HashMap<String, Object> retorno = new HashMap<>();
-        retorno.put("tipo", ERROR);
-        retorno.put("valor", null);
-        int tipo1 = (int) izquierda.get("tipo");
-        int tipo2 = (int) derecha.get("tipo");
-        if (tipo1 == ERROR || tipo2 == ERROR) {
-            retorno.put("valor", null);
-        } else if (tipo1 == ERROR0 || tipo2 == ERROR0) {
-            retorno.put("tipo", ERROR0);
-        } else {
-            if ((tipo1 == DECIMAL || tipo1 == INT) && (tipo2 == DECIMAL || tipo2 == INT)) {
-                if ((double) izquierda.get("valor") >= (double) derecha.get("valor")) {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", true);
-                } else {
-                    retorno.put("tipo", BOOLEAN);
-                    retorno.put("tipo", false);
-                }
-            } else {
-                retorno.put("tipo", ERROR);
-                retorno.put("valor", "Los datos ingresados no pueden ser comparados por el operador <=");
             }
         }
         return retorno;
@@ -532,14 +495,28 @@ public class Tabla {
         retorno.put("valor", null);
         int tipo1 = (int) izquierda.get("tipo");
         int tipo2 = (int) derecha.get("tipo");
+        System.out.println(tipo1 + "-" + tipo2);
+        System.out.println(izquierda.get("valor").toString());
         if (tipo1 == ERROR || tipo2 == ERROR) {
             retorno.put("valor", null);
         } else if (tipo1 == ERROR0 || tipo2 == ERROR0) {
             retorno.put("tipo", ERROR0);
         } else {
             if ((tipo1 == DECIMAL || tipo1 == INT) && (tipo2 == DECIMAL || tipo2 == INT)) {
+                boolean ret;
+                if (tipo1 == tipo2) {
+                    if (tipo1 == DECIMAL) {
+                        ret = (double) izquierda.get("valor") > (double) derecha.get("valor");
+                    } else {
+                        ret = (int) izquierda.get("valor") > (int) derecha.get("valor");
+                    }
+                } else if (tipo1 == DECIMAL && tipo2 == INT) {
+                    ret = (double) izquierda.get("valor") > (int) derecha.get("valor");
+                } else {
+                    ret = (int) izquierda.get("valor") > (double) derecha.get("valor");
+                }
                 retorno.put("tipo", BOOLEAN);
-                retorno.put("tipo", (double) izquierda.get("valor") > (double) derecha.get("valor"));
+                retorno.put("valor", ret);
             } else {
                 retorno.put("tipo", ERROR);
                 retorno.put("valor", "Los datos ingresados no pueden ser comparados por el operador <=");
@@ -547,7 +524,7 @@ public class Tabla {
         }
         return retorno;
     }
-    
+
     public HashMap<String, Object> resultado_menor(HashMap<String, Object> izquierda, HashMap<String, Object> derecha) {
         HashMap<String, Object> retorno = new HashMap<>();
         retorno.put("tipo", ERROR);
@@ -560,8 +537,20 @@ public class Tabla {
             retorno.put("tipo", ERROR0);
         } else {
             if ((tipo1 == DECIMAL || tipo1 == INT) && (tipo2 == DECIMAL || tipo2 == INT)) {
+                boolean ret;
+                if (tipo1 == tipo2) {
+                    if (tipo1 == DECIMAL) {
+                        ret = (double) izquierda.get("valor") < (double) derecha.get("valor");
+                    } else {
+                        ret = (int) izquierda.get("valor") < (int) derecha.get("valor");
+                    }
+                } else if (tipo1 == DECIMAL && tipo2 == INT) {
+                    ret = (double) izquierda.get("valor") < (int) derecha.get("valor");
+                } else {
+                    ret = (int) izquierda.get("valor") < (double) derecha.get("valor");
+                }
                 retorno.put("tipo", BOOLEAN);
-                retorno.put("tipo", (double) izquierda.get("valor") < (double) derecha.get("valor"));
+                retorno.put("valor", ret);
             } else {
                 retorno.put("tipo", ERROR);
                 retorno.put("valor", "Los datos ingresados no pueden ser comparados por el operador <=");
@@ -587,5 +576,11 @@ public class Tabla {
                 break;
         }
         return retorno;
+    }
+
+    public void asc(String palabra) {
+        Variable retorno = new Variable();
+        retorno.letpar_num(palabra);
+        retorno.letimpar_num(palabra);
     }
 }

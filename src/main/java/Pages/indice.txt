@@ -1,0 +1,17 @@
+BASE{
+[
+	CAPTCHA=captcha1;
+	NOMBRE=el nombre del captcha;
+	VECES=21312;
+	ACIERTOS=1231;
+	FALLOS=12312;
+	FECHA=12/02/21;
+],
+[
+	CAPTCHA=captcha2;
+	NOMBRE=el nombre del captcha;
+	VECES=21312;
+	ACIERTOS=1231;
+	FALLOS=12312;
+	FECHA=12/02/21;
+]}

@@ -5,9 +5,27 @@
  */
 package Generador;
 
-import com.hp.gagawa.java.elements.*;
+import com.hp.gagawa.java.Node;
+import com.hp.gagawa.java.elements.Body;
+import com.hp.gagawa.java.elements.Br;
+import com.hp.gagawa.java.elements.Button;
+import com.hp.gagawa.java.elements.Div;
+import com.hp.gagawa.java.elements.H1;
+import com.hp.gagawa.java.elements.Head;
+import com.hp.gagawa.java.elements.Html;
+import com.hp.gagawa.java.elements.Img;
+import com.hp.gagawa.java.elements.Input;
+import com.hp.gagawa.java.elements.Link;
+import com.hp.gagawa.java.elements.Option;
+import com.hp.gagawa.java.elements.P;
+import com.hp.gagawa.java.elements.Select;
+import com.hp.gagawa.java.elements.Span;
+import com.hp.gagawa.java.elements.Textarea;
+import com.hp.gagawa.java.elements.Title;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -24,198 +42,221 @@ public class html {
     }
 
     public static void main(String[] args) {
+        Html archivo = new Html();
+        List<Node> nodos = new ArrayList<>();
+        Head cabeza = new Head();
+        Title titulo = new Title();
+        titulo.appendText("EL TITULO");
+        cabeza.appendChild(titulo);
+        nodos.add(cabeza);
+        H1 nuevo = new H1();
+        nuevo.appendText("este es uno h1");
+        nuevo.setStyle("font-size:15px");
+        nuevo.setStyle("font-size:20px");
+        H1 nuevo2 = new H1();
+        nuevo2.appendText("este es dos h1");
+        H1 nuevo3 = new H1();
+        nuevo3.appendText("este es tres h1");
+        H1 nuevo4 = new H1();
+        nuevo4.appendText("este es cuatro h1");
+        System.out.println(nuevo4.write());
+        nodos.add(nuevo);
+        nodos.add(nuevo2);
+        nodos.add(nuevo3);
+        nodos.add(nuevo4);
+        archivo.appendChild(nodos);
+        System.out.println(archivo.write());
     }
 
-    public H1 parametros_h1(H1 h1, HashMap<String, String> parametros, String texto) {
-        if (parametros.containsKey("fts")) {
-            h1.setStyle("font-size: "+parametros.get("fts")+";");
-        }
-        if (parametros.containsKey("ftf")) {
-            h1.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            h1.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            h1.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("color")) {
-            h1.setStyle("color: "+parametros.get("color")+";");
+    public H1 parametros_h1(H1 h1, ArrayList<String> valores, String texto) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                h1.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                h1.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                h1.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                h1.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                h1.setStyle(valores.get(i));
+            }
         }
         h1.appendText(texto);
         return h1;
     }
-    
-    public Span parametros_spam(Span spam, HashMap<String, String> parametros, String texto) {
-        if (parametros.containsKey("fts")) {
-            spam.setStyle("font-size: "+parametros.get("fts")+";");
-        }
-        if (parametros.containsKey("ftf")) {
-            spam.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            spam.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            spam.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("color")) {
-            spam.setStyle("color: "+parametros.get("color")+";");
+
+    public Span parametros_spam(Span spam, ArrayList<String> valores, String texto) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                spam.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                spam.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                spam.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                spam.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                spam.setStyle(valores.get(i));
+            }
         }
         spam.appendText(texto);
         return spam;
     }
-    
-    public P parametros_p(P parrafo, HashMap<String, String> parametros, String texto) {
-        if (parametros.containsKey("fts")) {
-            parrafo.setStyle("font-size: "+parametros.get("fts")+";");
+
+    public P parametros_p(P p, ArrayList<String> valores, String texto) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                p.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                p.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                p.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                p.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                p.setStyle(valores.get(i));
+            }
         }
-        if (parametros.containsKey("ftf")) {
-            parrafo.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            parrafo.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            parrafo.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("color")) {
-            parrafo.setStyle("color: "+parametros.get("color")+";");
-        }
-        parrafo.appendText(texto);
-        return parrafo;
+        p.appendText(texto);
+        return p;
     }
-    
-    public Img parametros_img(Img img, HashMap<String, String> parametros) {
-        if (parametros.containsKey("src")) {
-            img.setSrc(parametros.get("src"));
-        }
-        if (parametros.containsKey("alt")) {
-            img.setAlt(parametros.get("height"));
-        }
-        if (parametros.containsKey("width")) {
-            img.setWidth(parametros.get("width"));
-        }
-        if (parametros.containsKey("id")) {
-            img.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("height")) {
-            img.setHeight(parametros.get("height"));
+
+    public Img parametros_img(Img img, ArrayList<String> valores) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("src=")) {
+                img.setSrc(valores.get(i).substring(4, valores.get(i).length()));
+            } else if (valores.get(i).contains("alt=")) {
+                img.setAlt(valores.get(i).substring(4, valores.get(i).length()));
+            } else if (valores.get(i).contains("id=")) {
+                img.setId(valores.get(i).substring(4, valores.get(i).length()));
+            } else if (valores.get(i).contains("height=")) {
+                img.setHeight(valores.get(i).substring(4, valores.get(i).length()));
+            } else if (valores.get(i).contains("width=")) {
+                img.setWidth(valores.get(i).substring(4, valores.get(i).length()));
+            }
         }
         return img;
     }
-    
+
     public Link parametros_link(Link link, String url) {
         link.setHref(url);
         return link;
     }
-    
+
     public Title parametros_titulo(Title titulo, String texto) {
         titulo.appendText(texto);
         return titulo;
     }
-    
-    public Button parametros_button(Button boton, HashMap<String, String> parametros, String texto){
-        if (parametros.containsKey("fts")) {
-            boton.setStyle("font-size: "+parametros.get("fts")+";");
-        }
-        if (parametros.containsKey("ftf")) {
-            boton.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            boton.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            boton.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("color")) {
-            boton.setStyle("color: "+parametros.get("color")+";");
-        }
-        if (parametros.containsKey("bg")) {
-            boton.setStyle("background: "+parametros.get("bg")+";");
-        }
-        if (parametros.containsKey("onclick")) {
-            boton.setAttribute("onclick", parametros.get("onclick"));
+
+    public Button parametros_button(Button boton, ArrayList<String> valores, String texto) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                boton.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                boton.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                boton.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                boton.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                boton.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("background-color:")) {
+                boton.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("onclick=")) {
+                boton.setAttribute("onclick", valores.get(i).substring(8, valores.get(i).length()));
+            }
         }
         boton.appendText(texto);
         return boton;
     }
     
-    public Br param_br(){
+     public Select parametros_select(Select select, ArrayList<String> valores, List<Node> opciones) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                select.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                select.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                select.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                select.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                select.setStyle(valores.get(i));
+            }
+        }
+        select.appendChild(opciones);
+        return select;
+    }
+
+    public Br param_br() {
         return new Br();
     }
-    
-    public Body parametros_body(Body body, String bg){
-        body.setStyle("background: "+bg+";");
+
+    public Body parametros_body(Body body, String bg) {
+        body.setStyle("background: " + bg + ";");
         return body;
     }
-    
-    public Input parametros_input(Input in, HashMap<String, String> parametros){
-        if (parametros.containsKey("fts")) {
-            in.setStyle("font-size: "+parametros.get("fts")+";");
+
+    public Input parametros_input(Input input, ArrayList<String> valores) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                input.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                input.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                input.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                input.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                input.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("type=")) {
+                input.setType(valores.get(i).substring(5, valores.get(i).length()));
+            }
         }
-        if (parametros.containsKey("ftf")) {
-            in.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            in.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            in.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("color")) {
-            in.setStyle("color: "+parametros.get("color")+";");
-        }
-        if (parametros.containsKey("type")) {
-            in.setType(parametros.get("type"));
-        }
-        return in;
+        return input;
     }
-    
-    public Textarea parametros_textarea(Textarea txt ,HashMap<String, String> parametros){
-        if (parametros.containsKey("fts")) {
-            txt.setStyle("font-size: "+parametros.get("fts")+";");
+
+    public Textarea parametros_textarea(Textarea txta, ArrayList<String> valores) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                txta.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                txta.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                txta.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                txta.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("cols=")) {
+                txta.setCols(valores.get(i).substring(5, valores.get(i).length()));
+            }else if (valores.get(i).contains("rows=")) {
+                txta.setRows(valores.get(i).substring(5, valores.get(i).length()));
+            }
         }
-        if (parametros.containsKey("ftf")) {
-            txt.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            txt.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            txt.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("cols")) {
-            txt.setCols(parametros.get("cols"));
-        }
-        if (parametros.containsKey("rows")) {
-            txt.setRows(parametros.get("rows"));
-        }
-        return txt;
+        return txta;
     }
-    
-    public Div parametros_textarea(Div div ,HashMap<String, String> parametros){
-        if (parametros.containsKey("fts")) {
-            div.setStyle("font-size: "+parametros.get("fts")+";");
+
+    public Div parametros_div(Div div, ArrayList<String> valores, List<Node> comp) {
+        for (int i = 0; i < valores.size(); i++) {
+            if (valores.get(i).contains("font-family:")) {
+                div.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("font-size:")) {
+                div.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                div.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("text-align:")) {
+                div.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("id=")) {
+                div.setId(valores.get(i).substring(3, valores.get(i).length()));
+            } else if (valores.get(i).contains("class=")) {
+                div.setCSSClass(valores.get(i).substring(6, valores.get(i).length()));
+            } else if (valores.get(i).contains("color:")) {
+                div.setStyle(valores.get(i));
+            } else if (valores.get(i).contains("background-color:")) {
+                div.setStyle(valores.get(i));
+            }  
         }
-        if (parametros.containsKey("ftf")) {
-            div.setStyle("font-family: "+parametros.get("ftf")+";");
-        }
-        if (parametros.containsKey("txta")) {
-            div.setStyle("text-align: "+parametros.get("txta")+";");
-        }
-        if (parametros.containsKey("id")) {
-            div.setId(parametros.get("id"));
-        }
-        if (parametros.containsKey("class")) {
-            div.setAttribute("class", parametros.get("class"));
-        }
-        if (parametros.containsKey("color")) {
-            div.setStyle("color: "+parametros.get("color")+";");
-        }
-        if (parametros.containsKey("bg")) {
-            div.setStyle("background: "+parametros.get("bg")+";");
-        }
+        div.appendChild(comp);
         return div;
     }
 }

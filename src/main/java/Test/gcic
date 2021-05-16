@@ -1,0 +1,17 @@
+<C_GCIC [id= "captcha_matematico_1"] [name= "Captcha Matemático 1"]>
+    !! El encabezado de la página que tendrá mi captcha
+    <C_HEAD>
+       <C_LINK 
+          [href= “https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html”]>
+       </C_LINK>
+          !! El título de mi página
+       <C_TITLE> Mi primer Captcha Matemático</C_TITLE>
+    </C_HEAD>
+    !! El cuerpo de la página
+    <C_BODY [background= "#e5e6ea"] >
+        !! un título simple estilizado
+        <C_H1 [id= "title_1"] [text-align= "center"] [color= "#7eff33"] >
+           Mi primer Captcha Matemático
+        </C_H1>
+    </C_BODY>
+</C_GCIC>
