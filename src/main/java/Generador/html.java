@@ -150,6 +150,7 @@ public class html {
     }
 
     public Button parametros_button(Button boton, ArrayList<String> valores, String texto) {
+        boton.setCSSClass("learn-more");
         for (int i = 0; i < valores.size(); i++) {
             if (valores.get(i).contains("font-family:")) {
                 boton.setStyle(valores.get(i));

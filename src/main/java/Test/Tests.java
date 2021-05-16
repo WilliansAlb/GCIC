@@ -29,7 +29,7 @@ import java_cup.runtime.Symbol;
 public class Tests {
 
     public static void main(String[] args) throws FileNotFoundException {
-        prueba_sinDB();
+        prueba_sin();
         //prueba_asc("probandoz");
     }
 

@@ -22,10 +22,10 @@
         <%@include file='header.html' %>
         <div class="main">
             <div class="multi-button">
-                <button class="learn-more" onclick="nuevo()">NUEVO</button>
-                <button class="learn-more" onclick="clickOculto()">ABRIR ARCHIVO</button>
-                <button class="learn-more">GUARDAR COMO</button>
-                <button class="learn-more"><svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g class="search-path" fill="none" stroke="#000000"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg>
+                <button class="learn-more" onclick="nuevo()"><img src="../img/svg/012-remove.svg" width="25px" title="Generador" alt="Generador">NUEVO</button>
+                <button class="learn-more" onclick="clickOculto()"><img src="../img/001-gcic.png" width="25px" title="Generador" alt="Generador">ABRIR ARCHIVO</button>
+                <button class="learn-more"><img src="../img/svg/029-save.svg" width="25px" title="Generador" alt="Generador">GUARDAR COMO</button>
+                <button class="learn-more"><img src="../img/svg/028-review.svg" width="25px" title="Generador" alt="Generador">
                     ANALIZAR</button>
             </div>
             <h3 hidden id="oculto"></h3>

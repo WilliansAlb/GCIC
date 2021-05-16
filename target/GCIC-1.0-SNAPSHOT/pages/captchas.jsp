@@ -76,7 +76,7 @@
                 <%}
                 } else {%>
                 <div class="paraFlex">
-                    <img src="img/folder.svg" width="30%">
+                    <img src="../img/svg/025-inbox-1.svg" width="30%" title="Generador" alt="Generador">
                     <h1 style="position: absolute;backdrop-filter: blur(20px);z-index: 20;color:rgb(207, 243, 141);">Aún no has creado ningún formulario</h1>
                 </div>
                 <%}%>
