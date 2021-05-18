@@ -20,8 +20,8 @@ import com.hp.gagawa.java.elements.Title;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import Tablas.Tabla;
-import POJOS.Variable;
+import Controladores.Tabla;
+import POJOS.*;
 import com.hp.gagawa.java.elements.Option;
 import com.hp.gagawa.java.elements.Script;
 import com.hp.gagawa.java.elements.Select;
@@ -32,12 +32,21 @@ parser code
     private Symbol sym;
     public Tabla tab = new Tabla();
     public Html retorno = new Html();
+    public Body cuerpo = new Body();
     public html html = new html();
     public Script funciones = new Script("");
     public String escribir = "";
+    public ArrayList<Errores> errores = new ArrayList<>();
+    public ArrayList<Cambio> cambios = new ArrayList<>();
     public ArrayList<Variable> globales = new ArrayList<>();
     public ArrayList<Variable> todas = new ArrayList<>();
     public ArrayList<Variable> locales = new ArrayList<>();
+    public String id_cap = "";
+    public String nombre_cap = "";
+    public String url_cap = "";
+    public String titulo_cap = "";
+    public int no_eje = -1;
+
     public Symbol getS(){
         return this.sym;
     }
@@ -60,6 +69,89 @@ parser code
         return null;
     }
     
+    public void analizar_asignacion(String id, Variable var, int linea, int col){
+        col ++;
+        linea++;
+        if (existe(id)!=null){
+            Variable temporal = existe(id);
+            if (temporal.getTipo()==var.getTipo()){
+                Object antiguo = temporal.getValor();
+                temporal.setValor(var.getValor());
+                cambios.add(new Cambio(id,no_eje+1,antiguo,var.getValor()));
+            } else {
+                errores.add(new Errores("-","Semantico",col,linea,"La variable "+id+" es de tipo "+compatibilidad(temporal.getTipo())+" y se le intenta asignar un "+compatibilidad(var.getTipo()),"Verifica al asignar que los datos sean compatibles"));
+            }
+        } else {
+            errores.add(new Errores("-","Semantico",col,linea,"No existe la variable que intentas crear","Crear primero la variable "+id));
+        }
+    }
+
+    public void analizar_declaracion(String tipo2, String modo, ArrayList<String> ids, Variable var, int linea, int col){
+        int tipo = Integer.parseInt(tipo2);
+        col ++;
+        linea++;
+            if (var==null){
+                for(int i = 0; i < ids.size(); i++){
+                    if (existe(ids.get(i))!=null){
+                        errores.add(new Errores("-","Semantico",col,linea,"Declaración de variable ya existente","Realiza el cambio del id de la variable"));
+                    } else {
+                        var.setId(ids.get(i));
+                        var.setEjecucion(no_eje+1);
+                        var.setTipo(tipo);
+                        var.setValorNull(tipo);
+                        if (modo.equalsIgnoreCase("-")){
+                            var.setModo("-");
+                            locales.add(var);
+                        } else {
+                            var.setModo("@global");
+                            globales.add(var);
+                        }
+                    }
+                }
+            } else {
+                for(int i = 0; i < ids.size(); i++){
+                    if (existe(ids.get(i))!=null){
+                        errores.add(new Errores("-","Semantico",col,linea,"Declaración de variable ya existente","Realiza el cambio del id de la variable"));
+                    } else {
+                        if (tipo==var.getTipo()){
+                            var.setId(ids.get(i));
+                            var.setEjecucion(no_eje+1);
+                            if (modo.equalsIgnoreCase("-")){
+                                var.setModo("-");
+                                locales.add(var);
+                            } else {
+                                var.setModo("@global");
+                                globales.add(var);
+                            }
+                        } else {
+                            if (var.toString().contains("error")){
+                                errores.add(new Errores("-","Semantico",col,linea,"La variable "+ids.get(i)+" es "+compatibilidad(tipo)+" y se le intento declarar un "+compatibilidad(var.getTipo()),"Verifica los valores ingresados"));
+                            } else {
+                                errores.add(new Errores("-","Semantico",col,linea,var.getValor().toString(),"Realiza el cambio del id de la variable"));
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    public String compatibilidad(int c){
+        switch(c){
+            case 0:
+                return "integer";
+            case 1:
+                return "string";
+            case 2:
+                return "decimal";
+            case 3:
+                return "char";
+            case 4:
+                return "boolean";
+            default:
+                return "integer";
+        }
+    }
+    
     public void report_fatal_error(Symbol cur) {
         System.out.println("unrecovered_syntax_error");
     }
@@ -69,8 +161,25 @@ parser code
     }
 
     public void syntax_error(Symbol cur_token) {
-        System.out.println(symbl_name_from_id(expected_token_ids().get(0)));
-        System.out.println("syntaxerr: " + symbl_name_from_id(cur_token.sym) +" Linea: "+cur_token.right+" Columna: "+cur_token.left+" Valor:"+cur_token.value);
+        String esperados = "";
+        for (int i = 0; i < expected_token_ids().size(); i++){
+            if (!symbl_name_from_id(expected_token_ids().get(i)).equals("error")){
+                esperados += symbl_name_from_id(expected_token_ids().get(i))+"-";
+            }
+        }
+        String nom = symbl_name_from_id(cur_token.sym);
+        String tip = "Lexico";
+        String explicacion = "";
+        String solucion = "";
+        if (!nom.equals("ERRORLEX")){
+            tip = "Sintactico";
+            explicacion = "Se esperaban alguno de los siguientes "+esperados;
+            solucion = "Considera la posibilidad de reescribir la produccion que genera problema";
+        } else {
+            explicacion = "No es reconocido ese token en el ambito donde se encuentra";
+            solucion = "Verifica que los tokens que ingreses sean permitidos en el ambito donde deseas";
+        }
+        errores.add(new Errores(cur_token.value.toString(),tip,cur_token.right-1,cur_token.left-1,explicacion,solucion));
     }
 
     protected int error_sync_size() {
@@ -89,7 +198,7 @@ terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TEXTAREA, SELECT, OPTION, D
 
 non terminal inicio, bloque_global, parametros_gcic, head, body, bloque_opcionesP, 
     metodo, bloque_head, link, bloque_codigo, bloque_codigo2, instruccion2, lista_metodos, bloque_instrucciones, instruccion, declaracion,
-    asignacion, llamada, if, repeat, while, insert, elseif, else, condicion, if2, repeat2, while2, asignacion2, declaracion2, asignar;
+    asignacion, llamada, if, repeat, while, insert, elseif, else, condicion, if2, repeat2, while2, asignacion2, declaracion2;
 
 non terminal HashMap<String, Object> dato, expr, valor_boolean;
 non terminal H1 h1;
@@ -103,7 +212,7 @@ non terminal Button button;
 non terminal Span spam;
 non terminal Option opcion;
 non terminal P p;
-non terminal Variable valor_asignar;
+non terminal Variable valor_asignar, asignar;
 non terminal List<Node> bloque_etiquetas, bloque_opciones;
 non terminal Node tipo_etiqueta, etiqueta;
 non terminal ArrayList<String> lista_button, parametros_button, parametros_div, lista_div, parametros_img, lista_img,
@@ -124,15 +233,18 @@ start with inicio;
 
 inicio::=
     MENORQ GCIC CORCHETEA parametros_gcic MAYORQ MENORQ bloque_global FINETIQUETA GCIC MAYORQ
+    | error
 ;
 
 bloque_global ::=
     head MENORQ body
     | body MENORQ head
+    | error
 ;
 
 body::=
-    BODY parametros_body MAYORQ bloque_etiquetas:e1 FINETIQUETA BODY MAYORQ {: Body temp = new Body(); temp.appendChild(e1); imp(new String(temp.write().getBytes(), "UTF-8")); :}
+    BODY parametros_body:e2 MAYORQ bloque_etiquetas:e1 FINETIQUETA BODY MAYORQ {: Body temp = html.parametros_body(new Body(),e2); temp.appendChild(e1); imp(new String(temp.write().getBytes(), "UTF-8")); cuerpo = temp; :}
+    | error
 ;
 
 head::=
@@ -143,6 +255,7 @@ head::=
 bloque_head::=
     link MENORQ title
     | title MENORQ link
+    | error
 ;
 
 bloque_etiquetas ::=
@@ -166,14 +279,15 @@ tipo_etiqueta::=
     | img:e1        {: RESULT = e1; :}
     | button:e1     {: RESULT = e1; :}
     | p:e1          {: RESULT = e1; :}
+    | error
 ;
 
 link::=
-    LINK CORCHETEA HREF IGUAL COMILLAS URL COMILLAS CORCHETEC MAYORQ FINETIQUETA LINK MAYORQ
+    LINK CORCHETEA HREF IGUAL COMILLAS URL:e1 COMILLAS CORCHETEC MAYORQ FINETIQUETA LINK MAYORQ {: url_cap = e1.toString(); :}
 ;
 
 title::=
-    TITLE MAYORQ tipo_string:e1 FINETIQUETA TITLE MAYORQ {: RESULT = "title="+e1; :}
+    TITLE MAYORQ tipo_string:e1 FINETIQUETA TITLE MAYORQ {: RESULT = "title="+e1; titulo_cap = e1; :}
 ;
 
 tipo_string::=
@@ -207,10 +321,11 @@ tipo_button::=
     | color:e1           {: RESULT = e1; :}
     | bg:e1           {: RESULT = e1; :}
     | onc:e1           {: RESULT = e1; :}
+    | error
 ;
 
 onc::=
-    ONC IGUAL COMILLAS PROCESS:e1 COMILLAS CORCHETEC {: RESULT = "onclick="+e1.toString();:}
+    ONC IGUAL COMILLAS PROCESS:e1 PARENTESISA PARENTESISC COMILLAS CORCHETEC {: RESULT = "onclick="+e1.toString();:}
 ;
 
 parametros_div::=
@@ -230,6 +345,7 @@ tipo_div::=
     | class2:e1      {: RESULT = e1;:}
     | color:e1      {: RESULT = e1;:}
     | bg:e1         {: RESULT = e1;:}
+    | error
 ;
 
 bg::=
@@ -241,8 +357,8 @@ class2::=
 ;
 
 parametros_gcic::=
-    name CORCHETEA id
-    | id CORCHETEA name
+    name:e1 CORCHETEA id:e2         {: nombre_cap = e1.toString().substring(5, e1.toString().length()); id_cap = e2.toString().substring(3, e2.toString().length()); :}
+    | id:e2 CORCHETEA name:e1       {: nombre_cap = e1.toString().substring(5, e1.toString().length()); id_cap = e2.toString().substring(3, e2.toString().length()); :}
 ;
 
 parametros_img::=
@@ -269,6 +385,7 @@ tipo_input::=
     | ftf:e1        {: RESULT = e1;:}
     | txta:e1       {: RESULT = e1;:}
     | id:e1         {: RESULT = e1;:}
+    | error
 ;
 
 tipo_img::=
@@ -277,6 +394,7 @@ tipo_img::=
     | height:e1         {: RESULT = e1;:}
     | alt:e1            {: RESULT = e1;:}
     | id:e1             {: RESULT = e1;:}
+    | error
 ;
 
 parametros_h1::=
@@ -294,6 +412,7 @@ tipo_h1::=
     | txta:e1              {: RESULT = e1;:}
     | id:e1              {: RESULT = e1;:}
     | color:e1              {: RESULT = e1;:}
+    | error
 ;
 
 type::=
@@ -355,11 +474,11 @@ h1::=
 ;
 
 br::=
-    BR MAYORQ   {: RESULT = new Br(); :}
+    BR MAYORQ FINETIQUETA BR MAYORQ  {: RESULT = new Br(); :}
 ;
 
 img::=
-    IMG parametros_img:e1 MAYORQ {: RESULT = html.parametros_img(new Img("",""), e1); :}
+    IMG parametros_img:e1 MAYORQ FINETIQUETA IMG MAYORQ {: RESULT = html.parametros_img(new Img("",""), e1); :}
 ;
 
 div::=
@@ -383,11 +502,11 @@ script::=
 ;
 
 input::=
-    INPUT parametros_input:e1 MAYORQ {: RESULT = html.parametros_input(new Input(), e1); :} 
+    INPUT parametros_input:e1 MAYORQ FINETIQUETA INPUT MAYORQ {: RESULT = html.parametros_input(new Input(), e1); :} 
 ;
 
 textarea::=
-    TEXTAREA parametros_textarea:e1 MAYORQ {: RESULT = html.parametros_textarea(new Textarea("",""), e1); :} 
+    TEXTAREA parametros_textarea:e1 MAYORQ FINETIQUETA TEXTAREA MAYORQ {: RESULT = html.parametros_textarea(new Textarea("",""), e1); :} 
 ;
 
 parametros_textarea::=
@@ -406,6 +525,7 @@ tipo_textarea::=
     | id:e1              {: RESULT = e1;:}
     | cols:e1              {: RESULT = e1;:}
     | rows:e1              {: RESULT = e1;:}
+    | error
 ;
 
 rows::=
@@ -437,7 +557,7 @@ lista_metodos::=
 
 metodo::=
     ONLOAD PARENTESISA PARENTESISC CORCHETEA bloque_codigo CORCHETEC
-    | IDENTIFICADOR PARENTESISA PARENTESISC CORCHETEA bloque_codigo2 CORCHETEC
+    | PROCESS PARENTESISA PARENTESISC CORCHETEA bloque_codigo2 CORCHETEC
 ;
 
 
@@ -460,7 +580,6 @@ instruccion2::=
     llamada
     | declaracion
     | asignacion
-    | if
     | repeat
     | while
 ;
@@ -475,16 +594,13 @@ instruccion::=
 ;
 
 if::=
-    IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif else
-;
-
-elseif::=
-    ELSE IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones elseif
+    IF PARENTESISA valor_boolean PARENTESISC THEN bloque_instrucciones else
 ;
 
 else::=
-    ELSE bloque_instrucciones
+    | ELSE bloque_instrucciones
 ;
+
 
 repeat::=
     REPEAT PARENTESISA condicion PARENTESISC HUNTIL PARENTESISA expr PARENTESISC bloque_instrucciones
@@ -501,7 +617,7 @@ while::=
 
 bloque_instrucciones::=
     INIT LLAVEA DOSP bloque_codigo DOSP LLAVEC END
-    | instruccion
+    | instruccion2
 ;
 
 insert::=
@@ -514,7 +630,7 @@ lista_tokens::=
 ;
 
 token::=
-    IDENTIFICADOR:e1            {:RESULT = e1.toString();:}
+    IDENTIFICADOR:e1 {: Variable var = existe(e1.toString()); if (var!=null) { if (var.getTipo()<5){ RESULT = var.getValor().toString(); } else { RESULT = "ERROR:No es un string"; }} else { RESULT = "ERROR:No se ha declarado la variable";} :}
     | APOS tipo_token:e1 APOS   {:RESULT = e1.toString();:}
 ;
 
@@ -531,16 +647,15 @@ llamada::=
 ;
 
 declaracion::=
-    tipo_dato:e1 global:e2 bloque_ids:e3 asignar:e4 PUNTOC 
+    tipo_dato:e1 global:e2 bloque_ids:e3 asignar:e4 PUNTOC:e5 {: analizar_declaracion(e1,e2,e3,e4,e5left,e5right); :}
 ;
 
 asignacion::=
-    IDENTIFICADOR:e1 IGUAL valor_asignar:e2 PUNTOC {: Variable var = existe(e1.toString()); if (var!=null) { if (var.getTipo()==1){ RESULT = (String) var.getValor(); } else { RESULT = "ERROR:No es un string"; }} else { RESULT = "ERROR:No se ha declarado la variable";} :}
+    IDENTIFICADOR:e1 IGUAL valor_asignar:e2 PUNTOC:e3 {: analizar_asignacion(e1.toString(),e2,e3left,e3right); :}
 ;
 
-
 asignar::=
-    | IGUAL valor_asignar:e1 {: imp(e1.getValor().toString());:}
+    {: RESULT = null; :} | IGUAL valor_asignar:e1 {: imp(e1.getValor().toString()); RESULT = e1; :}
 ;
 
 valor_asignar::=
@@ -552,6 +667,7 @@ valor_asignar::=
     | REVERSE PARENTESISA entre:e1 PARENTESISC {: RESULT = new Variable(); RESULT.reverse(e1); :}
     | FCARACTER PARENTESISA PARENTESISC {: RESULT = new Variable(); RESULT.char_aleatorio(); :}
     | FNUM PARENTESISA PARENTESISC {: RESULT = new Variable(); RESULT.num_aleatorio(); :}
+    | error
 ;
 
 entre::=

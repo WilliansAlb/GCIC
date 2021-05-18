@@ -64,11 +64,11 @@ public class LexerDB implements java_cup.runtime.Scanner {
 
   private static final String ZZ_CMAP_BLOCKS_PACKED_0 =
     "\11\0\2\1\2\0\1\1\22\0\1\2\13\0\1\3"+
-    "\16\0\1\4\1\0\1\5\3\0\1\6\1\7\1\10"+
-    "\1\0\1\11\1\12\1\0\1\13\1\14\2\0\1\15"+
-    "\1\16\1\17\1\20\1\21\1\0\1\22\1\23\1\24"+
-    "\1\0\1\25\4\0\1\26\1\0\1\27\35\0\1\30"+
-    "\1\1\1\31\u0182\0";
+    "\20\0\1\4\3\0\1\5\1\6\1\7\1\0\1\10"+
+    "\1\11\1\0\1\12\1\13\2\0\1\14\1\15\1\16"+
+    "\1\17\1\20\1\0\1\21\1\22\1\23\1\24\1\25"+
+    "\4\0\1\26\1\27\1\30\35\0\1\31\1\1\1\32"+
+    "\u0182\0";
 
   private static int [] zzUnpackcmap_blocks() {
     int [] result = new int[512];
@@ -95,12 +95,13 @@ public class LexerDB implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\3\1\1\2\1\3\6\1\1\4\1\5\1\6"+
-    "\1\7\1\10\1\11\17\0\1\12\10\0\1\13\1\0"+
-    "\1\14\2\0\1\15\1\16\1\0\1\17\1\20";
+    "\2\0\3\1\1\2\1\3\10\1\1\4\1\5\1\6"+
+    "\1\7\1\10\1\11\20\0\1\12\2\0\1\13\11\0"+
+    "\1\14\2\0\1\15\2\0\1\16\1\17\1\20\1\0"+
+    "\1\21\1\22";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[53];
+    int [] result = new int[62];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -125,16 +126,17 @@ public class LexerDB implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\32\0\64\0\116\0\150\0\64\0\64\0\202"+
-    "\0\234\0\266\0\320\0\352\0\u0104\0\64\0\64\0\64"+
-    "\0\64\0\u011e\0\64\0\u0138\0\u0152\0\u016c\0\u0186\0\u01a0"+
-    "\0\u01ba\0\u01d4\0\u01ee\0\u0208\0\u0222\0\u023c\0\u0256\0\u0270"+
-    "\0\u028a\0\u02a4\0\64\0\u02be\0\u02d8\0\u02f2\0\u030c\0\u0326"+
-    "\0\u0340\0\u035a\0\u0374\0\64\0\u038e\0\64\0\u03a8\0\u03c2"+
-    "\0\64\0\64\0\u03dc\0\64\0\64";
+    "\0\0\0\33\0\66\0\121\0\154\0\66\0\66\0\207"+
+    "\0\242\0\275\0\330\0\363\0\u010e\0\u0129\0\u0144\0\66"+
+    "\0\66\0\66\0\66\0\u015f\0\66\0\u017a\0\u0195\0\u01b0"+
+    "\0\u01cb\0\u01e6\0\u0201\0\u021c\0\u0237\0\u0252\0\u026d\0\u0288"+
+    "\0\u02a3\0\u02be\0\u02d9\0\u02f4\0\u030f\0\66\0\u032a\0\u0345"+
+    "\0\66\0\u0360\0\u037b\0\u0396\0\u03b1\0\u03cc\0\u03e7\0\u0402"+
+    "\0\u041d\0\u0438\0\66\0\u0453\0\u046e\0\66\0\u0489\0\u04a4"+
+    "\0\66\0\66\0\66\0\u04bf\0\66\0\66";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[53];
+    int [] result = new int[62];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -157,22 +159,24 @@ public class LexerDB implements java_cup.runtime.Scanner {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\3\1\4\1\5\1\6\1\3\1\7\1\10\1\11"+
-    "\1\12\1\3\1\13\4\3\1\14\5\3\1\15\1\16"+
-    "\1\17\1\20\1\21\4\22\1\23\25\22\33\0\1\4"+
-    "\32\0\1\5\37\0\1\24\27\0\1\25\31\0\1\26"+
-    "\31\0\1\27\2\0\1\30\40\0\1\31\22\0\1\32"+
-    "\20\0\4\22\1\0\25\22\14\0\1\33\40\0\1\34"+
-    "\27\0\1\35\25\0\1\36\24\0\1\37\37\0\1\40"+
-    "\23\0\1\41\32\0\1\42\31\0\1\43\44\0\1\44"+
-    "\22\0\1\45\27\0\1\46\25\0\1\47\33\0\1\50"+
-    "\42\0\1\51\17\0\1\52\41\0\1\53\17\0\1\54"+
-    "\45\0\1\55\32\0\1\56\32\0\1\57\20\0\1\60"+
-    "\41\0\1\61\17\0\1\62\40\0\1\63\17\0\1\64"+
-    "\46\0\1\65\6\0";
+    "\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12"+
+    "\1\3\1\13\4\3\1\14\4\3\1\15\1\16\1\17"+
+    "\1\20\1\3\1\21\1\22\1\23\27\24\1\25\3\24"+
+    "\34\0\1\4\33\0\1\5\37\0\1\26\30\0\1\27"+
+    "\32\0\1\30\32\0\1\31\2\0\1\32\41\0\1\33"+
+    "\26\0\1\34\40\0\1\35\21\0\1\36\22\0\27\24"+
+    "\1\0\3\24\13\0\1\37\41\0\1\40\30\0\1\41"+
+    "\26\0\1\42\25\0\1\43\40\0\1\44\40\0\1\45"+
+    "\23\0\1\46\25\0\1\47\33\0\1\50\32\0\1\51"+
+    "\45\0\1\52\23\0\1\53\30\0\1\54\26\0\1\55"+
+    "\50\0\1\56\16\0\1\57\43\0\1\60\20\0\1\61"+
+    "\42\0\1\62\20\0\1\63\46\0\1\64\25\0\1\65"+
+    "\40\0\1\66\33\0\1\67\21\0\1\70\42\0\1\71"+
+    "\20\0\1\72\41\0\1\73\32\0\1\74\20\0\1\75"+
+    "\47\0\1\76\10\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1014];
+    int [] result = new int[1242];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -215,12 +219,12 @@ public class LexerDB implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\1\11\2\1\2\11\6\1\4\11\1\1\1\11"+
-    "\17\0\1\11\10\0\1\11\1\0\1\11\2\0\2\11"+
-    "\1\0\2\11";
+    "\2\0\1\11\2\1\2\11\10\1\4\11\1\1\1\11"+
+    "\20\0\1\11\2\0\1\11\11\0\1\11\2\0\1\11"+
+    "\2\0\3\11\1\0\2\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[53];
+    int [] result = new int[62];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -715,82 +719,92 @@ public class LexerDB implements java_cup.runtime.Scanner {
             { 
             }
             // fall through
-          case 17: break;
+          case 19: break;
           case 2:
             { return new Symbol(symDB.COMA, yycolumn, yyline, yytext());
             }
             // fall through
-          case 18: break;
+          case 20: break;
           case 3:
             { yybegin(DATO);return new Symbol(symDB.IGUAL, yycolumn, yyline, yytext());
             }
             // fall through
-          case 19: break;
+          case 21: break;
           case 4:
             { return new Symbol(symDB.CORCHETEA, yycolumn, yyline, yytext());
             }
             // fall through
-          case 20: break;
+          case 22: break;
           case 5:
             { return new Symbol(symDB.CORCHETEC, yycolumn, yyline, yytext());
             }
             // fall through
-          case 21: break;
+          case 23: break;
           case 6:
             { return new Symbol(symDB.LLAVEA, yycolumn, yyline, yytext());
             }
             // fall through
-          case 22: break;
+          case 24: break;
           case 7:
             { return new Symbol(symDB.LLAVEC, yycolumn, yyline, yytext());
             }
             // fall through
-          case 23: break;
+          case 25: break;
           case 8:
             { return new Symbol(symDB.STRING,yycolumn,yyline,yytext());
             }
             // fall through
-          case 24: break;
-          case 9:
-            { yybegin(YYINITIAL);return new Symbol(symDB.PUNTOC,yycolumn,yyline,yytext());
-            }
-            // fall through
-          case 25: break;
-          case 10:
-            { return new Symbol(symDB.BASE, yycolumn, yyline, yytext());
-            }
-            // fall through
           case 26: break;
-          case 11:
-            { return new Symbol(symDB.FECHA, yycolumn, yyline, yytext());
+          case 9:
+            { yybegin(YYINITIAL);return new Symbol(symDB.INVERTIDA,yycolumn,yyline,yytext());
             }
             // fall through
           case 27: break;
-          case 12:
-            { return new Symbol(symDB.VECES,yycolumn,yyline,yytext());
+          case 10:
+            { return new Symbol(symDB.URL, yycolumn, yyline, yytext());
             }
             // fall through
           case 28: break;
-          case 13:
-            { return new Symbol(symDB.FALLOS,yycolumn,yyline,yytext());
+          case 11:
+            { return new Symbol(symDB.BASE, yycolumn, yyline, yytext());
             }
             // fall through
           case 29: break;
-          case 14:
-            { return new Symbol(symDB.NOMBRE,yycolumn,yyline,yytext());
+          case 12:
+            { return new Symbol(symDB.FECHA, yycolumn, yyline, yytext());
             }
             // fall through
           case 30: break;
-          case 15:
-            { return new Symbol(symDB.CAPTCHA, yycolumn, yyline, yytext());
+          case 13:
+            { return new Symbol(symDB.VECES,yycolumn,yyline,yytext());
             }
             // fall through
           case 31: break;
-          case 16:
-            { return new Symbol(symDB.ACIERTOS,yycolumn,yyline,yytext());
+          case 14:
+            { return new Symbol(symDB.FALLOS,yycolumn,yyline,yytext());
             }
             // fall through
           case 32: break;
+          case 15:
+            { return new Symbol(symDB.NOMBRE,yycolumn,yyline,yytext());
+            }
+            // fall through
+          case 33: break;
+          case 16:
+            { return new Symbol(symDB.TITULO, yycolumn, yyline, yytext());
+            }
+            // fall through
+          case 34: break;
+          case 17:
+            { return new Symbol(symDB.CAPTCHA, yycolumn, yyline, yytext());
+            }
+            // fall through
+          case 35: break;
+          case 18:
+            { return new Symbol(symDB.ACIERTOS,yycolumn,yyline,yytext());
+            }
+            // fall through
+          case 36: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

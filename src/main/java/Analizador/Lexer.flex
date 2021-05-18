@@ -21,8 +21,7 @@ C=[@_"-"%#&:]+
 C2=[@_%#&:.]+
 C3=["[""]""!"#$%&"'""("")""*""+",/:;="-"_~"?"@.]
 espacio=[\t|\r|\n]+
-fecha = [12][09]([9][0-9]|[012][0-9])"-"([0][1-9]|[1][0-2])"-"([0][1-9]|[1-2][0-9]|[3][01])
-esp = [ ]+
+esp = [" "]+
 url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 %state STRING,COMENT_LINE,MULTI_COMENT,COMENT_LINE2,MULTI_COMENT2,COMENT_LINE3,MULTI_COMENT3,TEXTO,ETIQUETA,CARACTER,SCRIPTING,PARAMETROS,PARAMETROS2
 %state TEXTO2
@@ -126,6 +125,8 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 <YYINITIAL> "REDIRECT"              {return new Symbol(sym.REDIRECT, yycolumn, yyline, yytext());}
 <PARAMETROS>{
     ("\"")                      {yybegin(YYINITIAL); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
+    "("              {return new Symbol(sym.PARENTESISA, yycolumn, yyline, yytext());}
+    ")"              {return new Symbol(sym.PARENTESISC, yycolumn, yyline, yytext());}
     {H}                         {return new Symbol(sym.HEX, yycolumn, yyline, yytext());}
     ("-")?{D}                        {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
     {D}("px")                 {return new Symbol(sym.PIXELS, yycolumn, yyline, yytext());}
@@ -136,14 +137,16 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     ("center"|"left"|"right"|"justify")              {return new Symbol(sym.ALIGN, yycolumn, yyline, yytext());}
     ("text"|"number"|"radio"|"checkbox")              {return new Symbol(sym.TIPOS, yycolumn, yyline, yytext());}
     ("row"|"column")              {return new Symbol(sym.CLASE, yycolumn, yyline, yytext());}
+    "PROCESS_"{ID}                       {return new Symbol(sym.PROCESS, yycolumn, yyline, yytext());}
     {ID}                        {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
-    {ID}"()"                        {return new Symbol(sym.PROCESS, yycolumn, yyline, yytext());}
     {url}                       {return new Symbol(sym.URL, yycolumn, yyline, yytext());}
-    [^\"]+                {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    [^\""("")"]+                {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
 }
 
 <PARAMETROS2>{
     ("\"")                      {yybegin(ETIQUETA); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
+    "("              {return new Symbol(sym.PARENTESISA, yycolumn, yyline, yytext());}
+    ")"              {return new Symbol(sym.PARENTESISC, yycolumn, yyline, yytext());}
     {H}                         {return new Symbol(sym.HEX, yycolumn, yyline, yytext());}
     ("-")?{D}                        {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
     {D}("px")                 {return new Symbol(sym.PIXELS, yycolumn, yyline, yytext());}
@@ -157,7 +160,6 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     {ID}                        {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
     {url}                       {return new Symbol(sym.URL, yycolumn, yyline, yytext());}
     [^\"]                       {return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
-    {espacio}           {/*Ignore*/}
 }
 
 <TEXTO>{
@@ -166,7 +168,9 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     ("!!")                      {yybegin(COMENT_LINE3);}
     ("<!--")                    {yybegin(MULTI_COMENT3);}
     [^"!!""<""</"]+             {if (!StringUtils.isBlank(yytext())) return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
-    {espacio}           {/*Ignore*/}
+    
+{esp} {/*ignore*/}
+{espacio}           {/*Ignore*/}
 }
 
 <TEXTO2>{
@@ -230,12 +234,13 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     "alt"              {return new Symbol(sym.ALT, yycolumn, yyline, yytext());}
     "onclick"              {return new Symbol(sym.ONC, yycolumn, yyline, yytext());}
     ("\"")              {yybegin(PARAMETROS2); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
-    {espacio}           {/*Ignore*/}
+{esp} {/*ignore*/}
+{espacio}           {/*Ignore*/}
 }
 
 <COMENT_LINE>{
     ("\n")                      {yybegin(YYINITIAL);}
-    [^\n]                       { }
+    [^"\n"]                       { }
 }
 
 <MULTI_COMENT>{
@@ -245,7 +250,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 
 <COMENT_LINE3>{
     ("\n")                      {yybegin(TEXTO);}
-    [^\n]+                       { }
+    [^"\n"]+                       { }
 }
 
 <MULTI_COMENT3>{
@@ -255,7 +260,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 
 <COMENT_LINE2>{
     ("\n")                      {yybegin(SCRIPTING);}
-    [^\n]                       { }
+    [^"\n"]                       { }
 }
 
 <MULTI_COMENT2>{
@@ -319,12 +324,15 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     "WHILE"              {return new Symbol(sym.WHILE, yycolumn, yyline, yytext());}
     "THENWHILE"              {return new Symbol(sym.THENW, yycolumn, yyline, yytext());}
     "INSERT"              {return new Symbol(sym.INSERT, yycolumn, yyline, yytext());}
-    "PROCESS_"{ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
+    "PROCESS_"{ID}                       {return new Symbol(sym.PROCESS, yycolumn, yyline, yytext());}
+    {ID}                       {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
     {D}                         {return new Symbol(sym.NUMERO, yycolumn, yyline, yytext());}
     {DEC}                         {return new Symbol(sym.DECIMAL, yycolumn, yyline, yytext());}
+{esp} {/*ignore*/}
+{espacio}           {/*Ignore*/}
 }
 
 {esp} {/*ignore*/}
 {espacio}           {/*Ignore*/}
 /* error fallback */
-    [^]                              { return new Symbol(sym.ERRORLEX,yycolumn,yyline,yytext()); }
+[^]                           { return new Symbol(sym.ERRORLEX,yycolumn,yyline,yytext()); }

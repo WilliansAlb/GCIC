@@ -4,9 +4,17 @@
         <servlet-name>Mostrar</servlet-name>
         <servlet-class>Servlet.Mostrar</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Analizar</servlet-name>
+        <servlet-class>Servlet.Analizar</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Mostrar</servlet-name>
         <url-pattern>/Mostrar</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Analizar</servlet-name>
+        <url-pattern>/Analizar</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

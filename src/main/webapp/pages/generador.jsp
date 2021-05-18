@@ -17,24 +17,30 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,500&display=swap" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
         <script src="../scripts/entrada.js" type="text/javascript"></script>
+        <script src="../scripts/FileSaver.js" type="text/javascript"></script>
     </head>
     <body>
         <%@include file='header.html' %>
-        <div class="main">
+        <div id="contenedor" class="main">
+            <h1 id="descripcion">Editor de texto GCIC</h1>
             <div class="multi-button">
                 <button class="learn-more" onclick="nuevo()"><img src="../img/svg/012-remove.svg" width="25px" title="Generador" alt="Generador">NUEVO</button>
                 <button class="learn-more" onclick="clickOculto()"><img src="../img/001-gcic.png" width="25px" title="Generador" alt="Generador">ABRIR ARCHIVO</button>
-                <button class="learn-more"><img src="../img/svg/029-save.svg" width="25px" title="Generador" alt="Generador">GUARDAR COMO</button>
-                <button class="learn-more"><img src="../img/svg/028-review.svg" width="25px" title="Generador" alt="Generador">
+                <button class="learn-more" onclick="descargar()"><img src="../img/svg/029-save.svg" width="25px" title="Generador" alt="Generador">GUARDAR COMO</button>
+                <button class="learn-more" onclick="analizar()"><img src="../img/svg/028-review.svg" width="25px" title="Generador" alt="Generador">
                     ANALIZAR</button>
             </div>
-            <h3 hidden id="oculto"></h3>
             <div class="textarea-wrapper" >
-                <textarea rows="25" cols="40" id="contenido-archivo" onkeypress="escribiendo()"></textarea>
+                <form method="POST" action="../Analizar" id="formulario">
+                    <textarea rows="25" cols="40" name="contenido-archivo" id="contenido-archivo" onkeypress="escribiendo(this)" onclick="getLineNumberAndColumnIndex(this)"></textarea>
+                </form>
+            </div>
+            <div id="abajo">
+                <p hidden id="oculto"><span id="modo"></span><span id="nombre"></span></p>
+                <p id="colandline">Linea: 0 - Columna: 0</p>
             </div>
         </div>
         <input type="file" id="archivo" accept=".gcic" hidden="true" onchange="aceptarArchivo()">
-
         <svg id="clouds" xmlns="http://www.w3.org/2000/svg" width="2611.084" height="485.677" viewBox="0 0 2611.084 485.677">
         <title>Gray Clouds Background</title>
         <path id="Path_39" data-name="Path 39"
@@ -45,6 +51,13 @@
         <script>
             window.onload = function () {
                 $("#titulo").text("generador de captchas");
+            }
+
+            function getLineNumberAndColumnIndex(textarea) {
+                var textLines = textarea.value.substr(0, textarea.selectionStart).split("\n");
+                var currentLineNumber = textLines.length;
+                var currentColumnIndex = textLines[textLines.length - 1].length;
+                $("#colandline").text("Linea: " + currentLineNumber + ", Columna: " + currentColumnIndex);
             }
         </script>
     </body>

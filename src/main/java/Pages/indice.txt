@@ -1,17 +1,22 @@
 BASE{
 [
-	CAPTCHA=captcha1;
-	NOMBRE=el nombre del captcha;
-	VECES=21312;
-	ACIERTOS=1231;
-	FALLOS=12312;
-	FECHA=12/02/21;
+	CAPTCHA=captcha_matematico_1\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
 ],
 [
-	CAPTCHA=captcha2;
-	NOMBRE=el nombre del captcha;
-	VECES=21312;
-	ACIERTOS=1231;
-	FALLOS=12312;
-	FECHA=12/02/21;
-]}
+	CAPTCHA=captcha_1\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+]
+}

@@ -10,7 +10,7 @@
     grid-template-columns: 25% 25% 25% 25%;
     margin-bottom: 1.5rem;
 }
- button {
+ button.learn-more {
 	 position: relative;
 	 display: inline-block;
 	 cursor: pointer;
@@ -63,4 +63,9 @@
  button.learn-more:active::before {
 	 box-shadow: 0 0 0 2px #b18597, 0 0 #ffe3e2;
 	 transform: translate3d(0, 0, -1em);
+}
+
+button.learn-more img {
+    display: inline-block;
+    vertical-align: middle;
 }

@@ -195,7 +195,7 @@ li {
 
 
 /* button */
-button {
+button.atras {
   font-family: inherit;
   font-weight: bold;
   color: var(--white-1);
@@ -211,14 +211,14 @@ button {
   cursor: pointer;
 }
 
-button:hover,
-button:focus {
+button.atras:hover,
+button.atras:focus {
   color: var(--primary);
   background: hsla(var(--hue), 25%, 10%, .2);
   border-color: currentColor;
 }
 
-button:active {
+button.atras:active {
   transform: translate(2px);
 }
 
@@ -322,9 +322,9 @@ button:active {
 }
 
 /* states */
-button:hover+.design-container,
-button:active+.design-container,
-button:focus+.design-container {
+button.atras:hover+.design-container,
+button.atras:active+.design-container,
+button.atras:focus+.design-container {
   --tr: 20;
   --op: .7;
 }

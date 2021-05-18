@@ -195,7 +195,7 @@ public class html {
     }
 
     public Body parametros_body(Body body, String bg) {
-        body.setStyle("background: " + bg + ";");
+        body.setStyle(bg);
         return body;
     }
 

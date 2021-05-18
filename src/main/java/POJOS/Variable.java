@@ -86,6 +86,51 @@ public class Variable {
     public void setEjecucion(int ejecucion) {
         this.ejecucion = ejecucion;
     }
+    
+    @Override
+    public String toString(){
+        switch(tipo){
+            case INT:
+                return "integer";
+            case STRING:
+                return "string";
+            case DECIMAL:
+                return "decimal";
+            case CHAR:
+                return "char";
+            case BOOLEAN:
+                return "boolean";
+            case ERROR:
+                return "error";
+            case ERROR0:
+                return "error";
+            default:
+                return "error inesperado";
+        }
+    }
+    
+    public void setValorNull(int c){
+        switch(c){
+            case INT:
+                setValor(0);
+                break;
+            case STRING:
+                setValor("");
+                break;
+            case DECIMAL:
+                setValor((double)0.0);
+                break;
+            case CHAR:
+                setValor(' ');
+                break;
+            case BOOLEAN:
+                setValor(false);
+                break;
+            default:
+                setValor("");
+                break;
+        }
+    }
 
     public void asc(String palabra) {
         if (palabra.contains("ERROR:")) {

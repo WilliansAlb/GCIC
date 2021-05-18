@@ -9,22 +9,24 @@ package Analizador;
 public class symDB {
   /* terminals */
   public static final int CAPTCHA = 4;
-  public static final int BASE = 2;
+  public static final int INVERTIDA = 15;
+  public static final int VECES = 6;
+  public static final int CORCHETEC = 14;
+  public static final int IGUAL = 7;
+  public static final int CORCHETEA = 13;
+  public static final int URL = 18;
+  public static final int LLAVEC = 12;
+  public static final int LLAVEA = 11;
+  public static final int STRING = 17;
   public static final int COMA = 3;
   public static final int FALLOS = 9;
-  public static final int STRING = 16;
-  public static final int EOF = 0;
-  public static final int VECES = 6;
-  public static final int LLAVEC = 12;
-  public static final int FECHA = 10;
-  public static final int LLAVEA = 11;
-  public static final int IGUAL = 7;
-  public static final int error = 1;
-  public static final int PUNTOC = 15;
-  public static final int ACIERTOS = 8;
-  public static final int CORCHETEC = 14;
   public static final int NOMBRE = 5;
-  public static final int CORCHETEA = 13;
+  public static final int EOF = 0;
+  public static final int BASE = 2;
+  public static final int FECHA = 10;
+  public static final int error = 1;
+  public static final int ACIERTOS = 8;
+  public static final int TITULO = 16;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -41,8 +43,10 @@ public class symDB {
   "LLAVEC",
   "CORCHETEA",
   "CORCHETEC",
-  "PUNTOC",
-  "STRING"
+  "INVERTIDA",
+  "TITULO",
+  "STRING",
+  "URL"
   };
 }
 

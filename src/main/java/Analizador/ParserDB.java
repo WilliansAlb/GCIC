@@ -9,6 +9,9 @@ import java_cup.runtime.Symbol;
 import POJOS.Captcha;
 import java.util.ArrayList;
 
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
   */
 @SuppressWarnings({"rawtypes"})
@@ -34,7 +37,7 @@ public class ParserDB extends java_cup.runtime.lr_parser {
     unpackFromStrings(new String[] {
     "\000\012\000\002\002\004\000\002\002\006\000\002\004" +
     "\002\000\002\004\003\000\002\005\005\000\002\005\003" +
-    "\000\002\003\005\000\002\006\004\000\002\007\016\000" +
+    "\000\002\003\005\000\002\006\014\000\002\007\016\000" +
     "\002\010\016" });
 
   /** Access to production table. */
@@ -43,26 +46,30 @@ public class ParserDB extends java_cup.runtime.lr_parser {
   /** Parse-action table. */
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
-    "\000\050\000\004\004\004\001\002\000\004\015\007\001" +
+    "\000\060\000\004\004\004\001\002\000\004\015\007\001" +
     "\002\000\004\002\006\001\002\000\004\002\001\001\002" +
-    "\000\006\016\uffff\017\013\001\002\000\006\005\051\016" +
-    "\ufffe\001\002\000\004\016\050\001\002\000\006\005\ufffc" +
+    "\000\006\016\uffff\017\013\001\002\000\006\005\061\016" +
+    "\ufffe\001\002\000\004\016\060\001\002\000\006\005\ufffc" +
     "\016\ufffc\001\002\000\004\006\016\001\002\000\004\012" +
     "\034\001\002\000\004\020\032\001\002\000\004\011\017" +
-    "\001\002\000\004\022\020\001\002\000\004\021\021\001" +
+    "\001\002\000\004\023\020\001\002\000\004\021\021\001" +
     "\002\000\004\007\022\001\002\000\004\011\023\001\002" +
-    "\000\004\022\024\001\002\000\004\021\025\001\002\000" +
+    "\000\004\023\024\001\002\000\004\021\025\001\002\000" +
     "\004\010\026\001\002\000\004\011\027\001\002\000\004" +
-    "\022\030\001\002\000\004\021\031\001\002\000\004\012" +
+    "\023\030\001\002\000\004\021\031\001\002\000\004\012" +
     "\ufff9\001\002\000\006\005\ufffb\016\ufffb\001\002\000\004" +
-    "\020\ufffa\001\002\000\004\011\035\001\002\000\004\022" +
+    "\024\050\001\002\000\004\011\035\001\002\000\004\023" +
     "\036\001\002\000\004\021\037\001\002\000\004\013\040" +
-    "\001\002\000\004\011\041\001\002\000\004\022\042\001" +
+    "\001\002\000\004\011\041\001\002\000\004\023\042\001" +
     "\002\000\004\021\043\001\002\000\004\014\044\001\002" +
-    "\000\004\011\045\001\002\000\004\022\046\001\002\000" +
-    "\004\021\047\001\002\000\004\020\ufff8\001\002\000\004" +
-    "\002\000\001\002\000\004\017\013\001\002\000\006\005" +
-    "\ufffd\016\ufffd\001\002" });
+    "\000\004\011\045\001\002\000\004\023\046\001\002\000" +
+    "\004\021\047\001\002\000\004\024\ufff8\001\002\000\004" +
+    "\011\051\001\002\000\004\023\052\001\002\000\004\021" +
+    "\053\001\002\000\004\022\054\001\002\000\004\011\055" +
+    "\001\002\000\004\023\056\001\002\000\004\021\057\001" +
+    "\002\000\004\020\ufffa\001\002\000\004\002\000\001\002" +
+    "\000\004\017\013\001\002\000\006\005\ufffd\016\ufffd\001" +
+    "\002" });
 
   /** Access to parse-action table. */
   public short[][] action_table() {return _action_table;}
@@ -70,7 +77,7 @@ public class ParserDB extends java_cup.runtime.lr_parser {
   /** <code>reduce_goto</code> table. */
   protected static final short[][] _reduce_table = 
     unpackFromStrings(new String[] {
-    "\000\050\000\004\002\004\001\001\000\002\001\001\000" +
+    "\000\060\000\004\002\004\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\010\003\011\004\010" +
     "\005\007\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\006\006\014\007\013\001\001\000\004" +
@@ -83,7 +90,10 @@ public class ParserDB extends java_cup.runtime.lr_parser {
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\004\003\051\001\001\000\002\001\001" });
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\004\003\061\001\001\000\002" +
+    "\001\001" });
 
   /** Access to <code>reduce_goto</code> table. */
   public short[][] reduce_table() {return _reduce_table;}
@@ -273,16 +283,22 @@ class CUP$ParserDB$actions {
           return CUP$ParserDB$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 7: // grupo ::= mitad faltante 
+          case 7: // grupo ::= mitad faltante URL IGUAL STRING INVERTIDA TITULO IGUAL STRING INVERTIDA 
             {
               Object RESULT =null;
-
-              CUP$ParserDB$result = parser.getSymbolFactory().newSymbol("grupo",4, ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-1)), ((java_cup.runtime.Symbol)CUP$ParserDB$stack.peek()), RESULT);
+		int e1left = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-5)).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-5)).right;
+		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-5)).value;
+		int e2left = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-1)).left;
+		int e2right = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-1)).right;
+		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-1)).value;
+		 temporal.setUrl(e1.toString()); temporal.setTitulo(e2.toString()); 
+              CUP$ParserDB$result = parser.getSymbolFactory().newSymbol("grupo",4, ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-9)), ((java_cup.runtime.Symbol)CUP$ParserDB$stack.peek()), RESULT);
             }
           return CUP$ParserDB$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 8: // mitad ::= CAPTCHA IGUAL STRING PUNTOC NOMBRE IGUAL STRING PUNTOC VECES IGUAL STRING PUNTOC 
+          case 8: // mitad ::= CAPTCHA IGUAL STRING INVERTIDA NOMBRE IGUAL STRING INVERTIDA VECES IGUAL STRING INVERTIDA 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-9)).left;
@@ -300,7 +316,7 @@ class CUP$ParserDB$actions {
           return CUP$ParserDB$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 9: // faltante ::= ACIERTOS IGUAL STRING PUNTOC FALLOS IGUAL STRING PUNTOC FECHA IGUAL STRING PUNTOC 
+          case 9: // faltante ::= ACIERTOS IGUAL STRING INVERTIDA FALLOS IGUAL STRING INVERTIDA FECHA IGUAL STRING INVERTIDA 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$ParserDB$stack.elementAt(CUP$ParserDB$top-9)).left;

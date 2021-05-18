@@ -16,7 +16,25 @@ public class Captcha {
     private int aciertos;
     private int fallos;
     private String fecha;
+    private String url;
+    private String titulo;
 
+    public Captcha(String id, String nombre, int veces, int aciertos, int fallos, String fecha, String url, String titulo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.veces = veces;
+        this.aciertos = aciertos;
+        this.fallos = fallos;
+        this.fecha = fecha;
+        this.url = url;
+        this.titulo = titulo;
+    }
+
+    public Captcha() {
+    }
+
+    
+    
     public String getId() {
         return id;
     }
@@ -64,4 +82,22 @@ public class Captcha {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+    
+    
 }

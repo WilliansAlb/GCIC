@@ -5,12 +5,16 @@
  */
 package Servlet;
 
+import Controladores.Captchas;
+import POJOS.Captcha;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -29,18 +33,11 @@ public class Mostrar extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/gcic;charset=UTF-8");
+        System.out.println(request.getParameter("id"));
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Mostrar</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Mostrar at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println(request.getParameter("id"));
         }
     }
 
@@ -56,7 +53,36 @@ public class Mostrar extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession s = request.getSession();
+        Captchas c = new Captchas();
+        if (request.getParameter("id") != null) {
+            ArrayList<Captcha> caps = c.obtener_listado();
+            if (!caps.isEmpty()) {
+                Captcha en = new Captcha();
+                for (int i = 0; i < caps.size(); i++) {
+                    if (caps.get(i).getId().equalsIgnoreCase(request.getParameter("id"))) {
+                        en = caps.get(i);
+                        break;
+                    }
+                }
+                System.out.println(en.getId());
+                s.setAttribute("link", "generados/" + en.getId() + ".jsp");
+                s.setAttribute("id", en.getId());
+                s.setAttribute("nombre", en.getNombre());
+                s.setAttribute("url", en.getUrl());
+                s.setAttribute("titulo", en.getTitulo());
+                response.sendRedirect("http://localhost:8080/GCIC/pages/captcha.jsp");
+            } else {
+                response.sendRedirect("http://localhost:8080/GCIC/pages/captchas.jsp");
+            }
+        } else {
+            s.setAttribute("link", null);
+            s.setAttribute("id",null);
+            s.setAttribute("nombre", null);
+            s.setAttribute("url",null);
+            s.setAttribute("titulo", null);
+            response.sendRedirect("http://localhost:8080/GCIC/pages/captcha.jsp");
+        }
     }
 
     /**
@@ -70,7 +96,7 @@ public class Mostrar extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
     }
 
     /**

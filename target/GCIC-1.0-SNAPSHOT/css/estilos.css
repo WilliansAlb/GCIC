@@ -5,21 +5,23 @@ textarea {
     background: url(http://i.imgur.com/2cOaJ.png);
     background-attachment: local;
     background-repeat: no-repeat;
+    background-position: left -12px;
     padding-left: 35px;
-    padding-top: 10px;
+    padding-top: 0;
     border-color: #ccc;
-    font-size: 13px;
+    font-size: 15px;
     line-height: 16px;
-    font-weight: bold;
+    font-weight: italic;
     width: 100%;
     color: #005761;
+    resize: none;
 }
 
 .textarea-wrapper {
     display: inline-block;
     background-image: linear-gradient(#F0F0F0 50%, #A9D4D9 50%);
     background-size: 100% 32px;
-    background-position: left 10px;
+    background-position: left 16px;
 }
 
 .main{
@@ -116,7 +118,48 @@ header > div {
 	pointer-events: none;
 	touch-action: none;
         background-color: #005761;
-        box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
--webkit-box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
--moz-box-shadow: -1px 5px 21px 3px rgba(178,128,255,0.53);
+        box-shadow: -1px 5px 21px 3px #00000063;
+-webkit-box-shadow: -1px 5px 21px 3px #00000063;
+-moz-box-shadow: -1px 5px 21px 3px #00000063;
 }
+
+.linea{
+    display:grid;
+    grid-template-columns:100%;
+    margin-top:20px;
+    margin-bottom: 20px; 
+    justify-content: center;
+    width: 100%;
+}
+
+#colandline{
+    float:right;
+    padding-right: 5px;
+    margin:0;
+}
+#abajo{
+    position: relative;
+    top: -47%;
+    background-color: #005167;
+    color: rgb(215,255,144);
+    border-radius: 3px;
+}
+
+#descripcion{
+    text-align: center;
+    margin: 0;
+    color: rgb(215,255,144);
+}
+
+#oculto{
+    float:left;
+    padding-left: 5px;
+    margin:0;
+}
+
+#contenedor{
+    border-radius: 5px;
+    border: 2px solid white;
+    background-color: #005167;
+}
+
