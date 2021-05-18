@@ -35,9 +35,30 @@
             out.print(h.getAttribute("temp").toString());
             h.setAttribute("temp", null);
         %>
-        <%} else {%>
-        <jsp:include page="${link}"></jsp:include>
-        <%}%>
+        <%@include file='oculto.html'%>
+    <script>
+        window.onload = function () {
+            $("#mensaje").html("<img src=\"../img/svg/126-check-1.svg\" width=\"100rem\" title=\"Informacion\" alt=\"Informacion\"><h1>Link del captcha generado correctamente: </h1><p><%out.print("http://localhost:8080/GCIC/Mostrar?id=" + captcha);%></p>");
+            $("#close").html("<img src=\"../img/svg/082-cross-1.svg\" width=\"25px\" title=\"Cerrar\" alt=\"Cerrar\">CERRAR");
+            $("#oculto2").show();
+        };
+    </script>
+    <style>
+        #mensaje {
+            padding: 0;
+            /* font-size: 40px; */
+            background-color: #b6b6b6;
+            /* width: 40%; */
+            height: auto;
+            -webkit-box-shadow: 7px 6px 78px 7px rgb(34 0 34);
+            -moz-box-shadow: 7px 6px 78px 7px rgb(34, 0, 34);
+            box-shadow: 7px 6px 78px 7px rgb(34 0 34);
+            border-radius: 0px 0px 10px 10px;
+        }
+    </style>
+    <%} else {%>
+    <jsp:include page="${link}"></jsp:include>
+    <%}%>
 </html>
 <%} else {
         response.sendRedirect("http://localhost:8080/GCIC/");

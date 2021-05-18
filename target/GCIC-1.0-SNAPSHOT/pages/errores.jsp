@@ -57,7 +57,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="width: fit-content;"><button class="learn-more" style="margin-bottom: 1em;" onclick="atras()">Anterior</button></td>
+                            <td style="width: fit-content;"><button class="learn-more" style="margin-bottom: 1em;" onclick="atras()"><img src="../img/svg/004-arrow-7.svg" width="25px" title="Generador" alt="Generador">Anterior</button></td>
                             <td id="error_e">1 de <%out.print(listado.size());%></td>
                             <td id="lex_e"><%out.print(listado.get(0).getLexema());%></td>
                             <td id="tipo_e"><%out.print(listado.get(0).getTipo());%></td>
@@ -65,7 +65,7 @@
                             <td id="columna_e"><%out.print(listado.get(0).getColumna());%></td>
                             <td id="descripcion_e"><%out.print(listado.get(0).getDescripcion());%></td>
                             <td id="solucion_e"><%out.print(listado.get(0).getSolucion());%></td>
-                            <td style="border-right: none; width: fit-content;"><button style="margin-bottom: 1em;" class="learn-more" onclick="siguiente()">Siguiente</button></td>
+                            <td style="border-right: none; width: fit-content;"><button style="margin-bottom: 1em;" class="learn-more" onclick="siguiente()"><img src="../img/svg/189-arrow.svg" width="25px" title="Generador" alt="Generador">Siguiente</button></td>
                         </tr>
                     </tbody>
                 </table>

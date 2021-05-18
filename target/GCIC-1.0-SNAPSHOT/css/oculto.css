@@ -1,0 +1,40 @@
+#oculto2{
+    position: fixed;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background-color: rgba(0, 0, 0, 0.507);
+}
+
+.mensaje{
+    padding: 0;
+    display: grid;
+    grid-template-columns: 80%;
+    align-content: center;
+    justify-content: center;
+    padding-bottom: 20px;
+    width: 70%;
+    background-color: transparent;
+    margin: auto;
+}
+
+#mensaje{
+    background-color: #b6b6b6;
+    -webkit-box-shadow: 7px 6px 78px 7px rgb(34 0 34);
+    -moz-box-shadow: 7px 6px 78px 7px rgb(34, 0, 34);
+    box-shadow: 7px 6px 78px 7px rgb(34 0 34);
+    border-radius: 0px 0px 10px 10px;
+}
+
+.mensaje button{
+    width: 50%;
+    margin: auto;
+}
+
+.cerrar{
+    background-color: red !important;
+    color: black !important;
+    font-weight: bold !important;
+}

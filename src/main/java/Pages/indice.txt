@@ -10,7 +10,77 @@ BASE{
 	TITULO= Mi primer Captcha Matemático\
 ],
 [
-	CAPTCHA=captcha_1\
+	CAPTCHA=another_captcha\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=prueba\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=rosario\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=abc1\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=captcha_matematico_5\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=captchaphoenix\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=lonely\
+	NOMBRE=Captcha Matemático 1\
+	VECES=0\
+	ACIERTOS=0\
+	FALLOS=0\
+	FECHA=No se ha utilizado\
+	URL=https://www.mclibre.org/consultar/htmlcss/html/html-etiquetas.html\
+	TITULO= Mi primer Captcha Matemático\
+],
+[
+	CAPTCHA=kaos\
 	NOMBRE=Captcha Matemático 1\
 	VECES=0\
 	ACIERTOS=0\

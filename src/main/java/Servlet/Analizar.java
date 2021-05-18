@@ -75,28 +75,61 @@ public class Analizar extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //processRequest(request, response);
-        //response.setContentType("text/plain;charset=UTF-8");
+        response.setContentType("text/plain;charset=UTF-8");
         HttpSession s = request.getSession();
-        String prueba = new String(request.getParameter("contenido-archivo").getBytes(), "UTF-8");
+        String prueba = new String(request.getParameter("contenido").getBytes(), "UTF-8");
         Captchas analizar = new Captchas();
         int temporal = analizar.crear_temporal(prueba);
         if (temporal != -1) {
-            int resultado = analizar.analizar();
-            if (resultado == -1) {
-                s.setAttribute("errores", analizar.errores);
-                s.setAttribute("texto", prueba);
-                response.sendRedirect("http://localhost:8080/GCIC/pages/errores.jsp");
-            } else {
-                Captcha en = analizar.retorno;
-                ArrayList<Captcha> lis = analizar.obtener_listado();
-                boolean escribir = false;
-                for (int i = 0; i < lis.size(); i++) {
-                    if (lis.get(i).getId().equalsIgnoreCase(en.getId())) {
-                        escribir = true;
-                        break;
+            if (request.getParameter("id") == null) {
+                int resultado = analizar.analizar();
+                if (resultado == -1) {
+                    s.setAttribute("errores", analizar.errores);
+                    s.setAttribute("texto", prueba);
+                    response.getWriter().write("ERROR");
+                } else {
+                    Captcha en = analizar.retorno;
+                    ArrayList<Captcha> lis = analizar.obtener_listado();
+                    boolean escribir = false;
+                    String existe = "EXISTE-";
+                    for (int i = 0; i < lis.size(); i++) {
+                        if (lis.get(i).getId().equalsIgnoreCase(en.getId())) {
+                            escribir = true;
+                        }
+                        if (i == lis.size() - 1) {
+                            existe += lis.get(i).getId();
+                        } else {
+                            existe += lis.get(i).getId() + "%";
+                        }
+                    }
+                    if (!escribir) {
+                        String tex = new String(analizar.cuerpo.write().getBytes(), "UTF-8");
+                        int r = analizar.crear_jsp(tex, en.getId());
+                        if (r == 1) {
+                            analizar.actualizar(en);
+                            s.setAttribute("link", "generados/" + en.getId() + ".jsp");
+                            s.setAttribute("id", en.getId());
+                            s.setAttribute("nombre", en.getNombre());
+                            s.setAttribute("titulo", en.getTitulo());
+                            s.setAttribute("url", en.getUrl());
+                            s.setAttribute("temp", tex);
+                            response.getWriter().write("REDIRIGIR");
+                        } else {
+                            response.getWriter().write("NO CREADO");
+                        }
+                    } else {
+                        response.getWriter().write(existe);
                     }
                 }
-                if (!escribir) {
+            } else {
+                int resultado = analizar.analizar();
+                if (resultado == -1) {
+                    s.setAttribute("errores", analizar.errores);
+                    s.setAttribute("texto", prueba);
+                    response.getWriter().write("ERROR");
+                } else {
+                    Captcha en = analizar.retorno;
+                    en.setId(request.getParameter("id"));
                     String tex = new String(analizar.cuerpo.write().getBytes(), "UTF-8");
                     int r = analizar.crear_jsp(tex, en.getId());
                     if (r == 1) {
@@ -105,17 +138,16 @@ public class Analizar extends HttpServlet {
                         s.setAttribute("id", en.getId());
                         s.setAttribute("nombre", en.getNombre());
                         s.setAttribute("url", en.getUrl());
+                        s.setAttribute("titulo", en.getTitulo());
                         s.setAttribute("temp", tex);
-                        response.sendRedirect("http://localhost:8080/GCIC/pages/captcha.jsp");
+                        response.getWriter().write("REDIRIGIR");
                     } else {
-                        response.sendRedirect("http://localhost:8080/GCIC/pages/captchas.jsp");
+                        response.getWriter().write("NO CREADO");
                     }
-                } else {
-                    response.sendRedirect("http://localhost:8080/GCIC/pages/captchas.jsp");
                 }
             }
         } else {
-            response.sendRedirect("http://localhost:8080/GCIC/pages/errores.jsp");
+            response.sendRedirect("ERROR");
         }
     }
 

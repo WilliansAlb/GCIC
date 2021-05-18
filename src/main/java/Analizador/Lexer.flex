@@ -22,6 +22,23 @@ C2=[@_%#&:.]+
 C3=["[""]""!"#$%&"'""("")""*""+",/:;="-"_~"?"@.]
 espacio=[\t|\r|\n]+
 esp = [" "]+
+gcic = [Cc][_][Gg][Cc][Ii][Cc]
+head = [Cc][_][Hh][Ee][Aa][Dd]
+title = [Cc][_][Tt][Ii][Tt][Ll][Ee]
+link = [Cc][_][Ll][Ii][Nn][Kk]
+body = [Cc][_][Bb][Oo][Dd][Yy]
+spam = [Cc][_][Ss][Pp][Aa][Mm]
+input = [Cc][_][Ii][Nn][Pp][Uu][Tt]
+textarea = [Cc][_][Tt][Ee][Xx][Tt][Aa][Rr][Ee][Aa]
+select = [Cc][_][Ss][Ee][Ll][Ee][Cc][Tt]
+option = [Cc][_][Oo][Pp][Tt][Ii][Oo][Nn]
+div = [Cc][_][Dd][Ii][Vv]
+img = [Cc][_][Ii][Mm][Gg]
+br = [Cc][_][Bb][Rr]
+button = [Cc][_][Bb][Uu][Tt][Tt][Oo][Nn]
+h1 = [Cc][_][Hh][1]
+p = [Cc][_][Pp]
+script = [Cc][_][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Nn][Gg]
 url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 %state STRING,COMENT_LINE,MULTI_COMENT,COMENT_LINE2,MULTI_COMENT2,COMENT_LINE3,MULTI_COMENT3,TEXTO,ETIQUETA,CARACTER,SCRIPTING,PARAMETROS,PARAMETROS2
 %state TEXTO2
@@ -35,23 +52,23 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 %}
 %%
 /* palabras reservadas */
-<YYINITIAL> "C_GCIC"                 {return new Symbol(sym.GCIC, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_HEAD"                 {return new Symbol(sym.HEAD, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_TITLE"                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_LINK"                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_BODY"                 {return new Symbol(sym.BODY, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_SPAM"                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_INPUT"                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_TEXTAREA"                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_SELECT"                {return new Symbol(sym.SELECT,yycolumn,yyline,yytext());}
-<YYINITIAL> "C_OPTION"                {return new Symbol(sym.OPTION,yycolumn,yyline,yytext());}
-<YYINITIAL> "C_DIV"                 {return new Symbol(sym.DIV,yycolumn,yyline,yytext());}
-<YYINITIAL> "C_IMG"                 {return new Symbol(sym.IMG,yycolumn,yyline,yytext());}
-<YYINITIAL> "C_BR"          {return new Symbol(sym.BR, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_BUTTON"               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
-<YYINITIAL> "C_H1"            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_P"              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
-<YYINITIAL> "C_SCRIPTING"              {yybegin(SCRIPTING);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
+<YYINITIAL> {gcic}                 {return new Symbol(sym.GCIC, yycolumn, yyline, yytext());}
+<YYINITIAL> {head}                 {return new Symbol(sym.HEAD, yycolumn, yyline, yytext());}
+<YYINITIAL> {title}                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
+<YYINITIAL> {link}                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
+<YYINITIAL> {body}                 {return new Symbol(sym.BODY, yycolumn, yyline, yytext());}
+<YYINITIAL> {spam}                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
+<YYINITIAL> {input}                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
+<YYINITIAL> {textarea}                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
+<YYINITIAL> {select}                {return new Symbol(sym.SELECT,yycolumn,yyline,yytext());}
+<YYINITIAL> {option}                {return new Symbol(sym.OPTION,yycolumn,yyline,yytext());}
+<YYINITIAL> {div}                 {return new Symbol(sym.DIV,yycolumn,yyline,yytext());}
+<YYINITIAL> {img}                 {return new Symbol(sym.IMG,yycolumn,yyline,yytext());}
+<YYINITIAL> {br}          {return new Symbol(sym.BR, yycolumn, yyline, yytext());}
+<YYINITIAL> {button}               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
+<YYINITIAL> {h1}            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
+<YYINITIAL> {p}              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
+<YYINITIAL> {script}              {yybegin(SCRIPTING);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
 <YYINITIAL> "ON_LOAD"              {return new Symbol(sym.ONLOAD, yycolumn, yyline, yytext());}
 <YYINITIAL> "href"              {return new Symbol(sym.HREF, yycolumn, yyline, yytext());}
 <YYINITIAL> "background"              {return new Symbol(sym.BG, yycolumn, yyline, yytext());}
@@ -203,19 +220,19 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
     "="                     {return new Symbol(sym.IGUAL, yycolumn, yyline, yytext());}
     "["                     {return new Symbol(sym.CORCHETEA, yycolumn, yyline, yytext());}
     "]"                     {return new Symbol(sym.CORCHETEC, yycolumn, yyline, yytext());}
-    "C_TITLE"                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
-    "C_LINK"                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
-    "C_SPAM"                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
-    "C_INPUT"                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
-    "C_TEXTAREA"                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
-    "C_SELECT"                {return new Symbol(sym.SELECT,yycolumn,yyline,yytext());}
-    "C_OPTION"                {return new Symbol(sym.OPTION,yycolumn,yyline,yytext());}
-    "C_DIV"                 {return new Symbol(sym.DIV,yycolumn,yyline,yytext());}
-    "C_IMG"                 {return new Symbol(sym.IMG,yycolumn,yyline,yytext());}
-    "C_BR"          {return new Symbol(sym.BR, yycolumn, yyline, yytext());}
-    "C_BUTTON"               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
-    "C_H1"            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
-    "C_P"              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
+    {title}                 {return new Symbol(sym.TITLE, yycolumn, yyline, yytext());}
+    {link}                 {return new Symbol(sym.LINK, yycolumn, yyline, yytext());}
+    {spam}                 {return new Symbol(sym.SPAM, yycolumn, yyline, yytext());}
+    {input}                 {return new Symbol(sym.INPUT, yycolumn, yyline, yytext());}
+    {textarea}                { return new Symbol(sym.TEXTAREA, yycolumn, yyline, yytext());}
+    {select}                {return new Symbol(sym.SELECT,yycolumn,yyline,yytext());}
+    {option}                {return new Symbol(sym.OPTION,yycolumn,yyline,yytext());}
+    {div}                 {return new Symbol(sym.DIV,yycolumn,yyline,yytext());}
+    {img}                 {return new Symbol(sym.IMG,yycolumn,yyline,yytext());}
+    {br}          {return new Symbol(sym.BR, yycolumn, yyline, yytext());}
+    {button}               {return new Symbol(sym.BUTTON,yycolumn,yyline,yytext());}
+    {h1}            {return new Symbol(sym.H1, yycolumn, yyline, yytext());}
+    {p}              {return new Symbol(sym.P, yycolumn, yyline, yytext());}
     "href"              {return new Symbol(sym.HREF, yycolumn, yyline, yytext());}
     "background"              {return new Symbol(sym.BG, yycolumn, yyline, yytext());}
     "color"              {return new Symbol(sym.COLOR, yycolumn, yyline, yytext());}
@@ -269,7 +286,7 @@ url = ("https://")?{L}({L})*"."{L}({L})*"."{L}({L})*"/"?(({L}|{D}|{C3})*("/")?)*
 }
 
 <SCRIPTING>{
-    ("C_SCRIPTING")             {yybegin(YYINITIAL);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
+    {script}                    {yybegin(YYINITIAL);return new Symbol(sym.SCRIPT, yycolumn, yyline, yytext());}
     ("'")                       {yybegin(CARACTER); return new Symbol(sym.APOS, yycolumn, yyline, yytext());}
     ("\"")                      {yybegin(STRING); return new Symbol(sym.COMILLAS, yycolumn, yyline, yytext());}
     (",")                       {return new Symbol(sym.COMA, yycolumn, yyline, yytext());}
